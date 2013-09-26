@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Target Name="BeforeBuild">
+        <Error Condition="'$(VisualStudioVersion)' == ''"
+               ContinueOnError="false"
+               Text="Please provide the VisualStudioVersion property as a parameter to MSBuild to specify the target version of VS to build the extension for (i.e. '10.0' or '11.0')." />
+        <Message Text="Building for Visual Studio $(VisualStudioVersion), Target Framework $(TargetFrameworkVersion), Platform $(Platform)"
+                 Importance="high" />
+    </Target>
+</Project>
