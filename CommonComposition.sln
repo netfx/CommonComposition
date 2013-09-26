@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Autofac",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Mef", "CommonComposition.Mef\CommonComposition.Mef.csproj", "{4262475F-B6D3-4CE3-85BD-AEDEB3A63DBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Tests", "..\CommonComposition.Tests\CommonComposition.Tests.csproj", "{C05417D0-5374-4D8E-A0BA-41C6CF3E6C08}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Tests", "CommonComposition.Tests\CommonComposition.Tests.csproj", "{C05417D0-5374-4D8E-A0BA-41C6CF3E6C08}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Unity", "CommonComposition.Unity\CommonComposition.Unity.csproj", "{973587EC-7CD5-4F26-82B9-EFA74390C553}"
 EndProject
