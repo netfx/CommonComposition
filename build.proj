@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0"
+         DefaultTargets="Build"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildThisFileDirectory)CommonComposition.tasks" />
+
+    <PropertyGroup>
+        <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+        <BuildRoot>$(MSBuildThisFileDirectory)</BuildRoot>
+        <ReleaseNotes>$([System.IO.File]::ReadAllText('$(BuildRoot)ReleaseNotes.md'))</ReleaseNotes>
+    </PropertyGroup>
+
+    <Target Name="Build" DependsOnTargets="ReplaceCurrentVersions">
+        <MSBuild Projects="CommonComposition.sln"
+                 Properties="Configuration=Release"
+                 Targets="Rebuild"
+                 />
+    </Target>
+
+    <Target Name="ReplaceCurrentVersions">
+        <ReadAssemblyVersion File="$(MSBuildThisFileDirectory)GlobalAssemblyInfo.cs">
+            <Output PropertyName="Major"
+                    TaskParameter="Major"/>
+            <Output PropertyName="Minor"
+                    TaskParameter="Minor"/>
+        </ReadAssemblyVersion>
+
+        <PropertyGroup Condition="'$(FileVersion)' == ''">
+            <!-- Build number is of the format (2 digit year)(2 digit month) -->
+            <Build>$([System.DateTime]::UtcNow.ToString("yyMM"))</Build>
+            <!-- Revision number is of the format (2 digit hour)(2 digit minutes) -->
+            <Revision>$([System.DateTime]::UtcNow.ToString("ddHH"))</Revision>
+            <FileVersion>$(Major).$(Minor).$(Build).$(Revision)</FileVersion>
+            <!-- TODO: maybe we should have two builds, one that builds the public simplified version
+                 and one with the full build/revision -->
+        </PropertyGroup>
+
+        <PropertyGroup>
+            <PackageVersion>$(FileVersion)</PackageVersion>
+        </PropertyGroup>
+
+        <ItemGroup>
+            <_VersionRegexTransform Include="$(MSBuildThisFileDirectory)GlobalAssemblyInfo.cs">
+                <Find>AssemblyFileVersion\(".*?"\)</Find>
+                <ReplaceWith>AssemblyFileVersion("$(FileVersion)")</ReplaceWith>
+            </_VersionRegexTransform>
+            <_VersionRegexTransform Include="$(MSBuildThisFileDirectory)GlobalAssemblyInfo.cs">
+                <Find>AssemblyVersion\(".*?"\)</Find>
+                <ReplaceWith>AssemblyVersion("$(FileVersion)")</ReplaceWith>
+            </_VersionRegexTransform>
+            <_VersionRegexTransform Include="$(MSBuildThisFileDirectory)GlobalAssemblyInfo.cs">
+                <Find>AssemblyInformationalVersion\(".*?"\)</Find>
+                <ReplaceWith>AssemblyInformationalVersion("$(PackageVersion)")</ReplaceWith>
+            </_VersionRegexTransform>
+            <_VersionRegexTransform Include="$(BuildRoot)**\*.nuspec"
+                            Condition="'$(ReleaseNotes)' != ''">
+                <Find><![CDATA[<releaseNotes />|<releaseNotes/>|<releaseNotes>.*</releaseNotes>]]></Find>
+                <ReplaceWith><![CDATA[<releaseNotes>$(ReleaseNotes)</releaseNotes>]]></ReplaceWith>
+                <Options>Singleline</Options>
+            </_VersionRegexTransform>
+            <_VersionRegexTransform Include="$(BuildRoot)**\*.nuspec">
+                <Find><![CDATA[<version>.*</version>]]></Find>
+                <ReplaceWith><![CDATA[<version>$(PackageVersion)</version>]]></ReplaceWith>
+            </_VersionRegexTransform>
+        </ItemGroup>
+
+        <RegexTransform Items="@(_VersionRegexTransform)" />
+    </Target>
+
+</Project>

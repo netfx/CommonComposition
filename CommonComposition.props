@@ -1,21 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <OutputPath>bin\$(VisualStudioVersion)\</OutputPath>
+        <SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$(MSBuildThisFileDirectory)..\</SolutionDir>
+        <SolutionDir Condition="!HasTrailingSlash('$(SolutionDir)')">$(SolutionDir)\</SolutionDir>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)ClariusLabs.snk</AssemblyOriginatorKeyFile>
+        <RestorePackages Condition="'$(RestorePackages)' == ''">true</RestorePackages>
+        <FrameworkName Condition="'$(FrameworkName)' == ''">net40</FrameworkName>
+        <NuGetDir>$(SolutionDir).nuget\</NuGetDir>
+        <NuGetExe>$(NuGetDir)NuGet.exe</NuGetExe>
+        <OutputPath>bin\lib\$(FrameworkName)\</OutputPath>
+        <PackageRoot>$(SolutionDir)build\</PackageRoot>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <!-- Common properties -->
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Release' ">
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <NuGet>true</NuGet>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(VisualStudioVersion)' == '11.0'">
-        <DefineConstants>$(DefineConstants);v11</DefineConstants>
-        <NugetTarget>net40</NugetTarget>
-        <Vs11>True</Vs11>
-        <Vs10>False</Vs10>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(VisualStudioVersion)' != '11.0'">
-        <DefineConstants>$(DefineConstants);v10</DefineConstants>
-        <NugetTarget>net40</NugetTarget>
-        <Vs11>False</Vs11>
-        <Vs10>True</Vs10>
+    <PropertyGroup Condition="'$(TargetFrameworkVersion)' == ''">
+        <TargetFrameworkVersion Condition="'$(FrameworkName)' == 'portable-win+net40+sl50+wp8'">v4.0</TargetFrameworkVersion>
+        <TargetFrameworkVersion Condition="'$(FrameworkName)' == 'net40'">v4.0</TargetFrameworkVersion>
+        <TargetFrameworkVersion Condition="'$(FrameworkName)' == 'net45'">v4.5</TargetFrameworkVersion>
+        <TargetFrameworkVersion Condition="'$(FrameworkName)' == 'net35'">v3.5</TargetFrameworkVersion>
     </PropertyGroup>
 </Project>

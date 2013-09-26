@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
@@ -9,11 +9,11 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("CommonComposition")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.1")]
-[assembly: AssemblyFileVersion("0.1")]
+[assembly: AssemblyVersion("0.1.1309.2620")]
+[assembly: AssemblyFileVersion("0.1.1309.2620")]
 
 // This attribute should be the SemanticVersion one.
-[assembly: AssemblyInformationalVersion("0.1")]
+[assembly: AssemblyInformationalVersion("0.1.1309.2620")]
 
 [assembly: NeutralResourcesLanguage("en")]
 

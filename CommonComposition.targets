@@ -1,10 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Target Name="BeforeBuild">
-        <Error Condition="'$(VisualStudioVersion)' == ''"
-               ContinueOnError="false"
-               Text="Please provide the VisualStudioVersion property as a parameter to MSBuild to specify the target version of VS to build the extension for (i.e. '10.0' or '11.0')." />
-        <Message Text="Building for Visual Studio $(VisualStudioVersion), Target Framework $(TargetFrameworkVersion), Platform $(Platform)"
-                 Importance="high" />
+        
+    </Target>
+
+    <Target Name="AfterBuild" Condition="$(NuGet) == 'true'">
+        <!-- SymbolSource -->
+        <ItemGroup>
+            <SymbolSource Include="**\*.cs" Exclude="nuget\**\*.cs">
+                <Visible>False</Visible>
+            </SymbolSource>
+            <SymbolSource Include="**\*.xaml" Exclude="nuget\**\*.xaml">
+                <Visible>False</Visible>
+            </SymbolSource>
+            <SymbolSource Include="$(IntermediateOutputPath)**\*.cs">
+                <Visible>False</Visible>
+            </SymbolSource>
+        </ItemGroup>
+
+        <Copy SourceFiles="@(SymbolSource)"
+              DestinationFiles="@(SymbolSource->'$(OutputPath)..\..\src\%(RecursiveDir)%(Filename)%(Extension)')"
+              ContinueOnError="false"
+              SkipUnchangedFiles="true"
+              OverwriteReadOnlyFiles="true"
+              Retries="$(CopyRetryCount)"
+              RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)" />
+        <Copy SourceFiles="$(SolutionDir)GlobalAssemblyInfo.cs"
+              DestinationFiles="$(OutputPath)..\..\src\Properties\GlobalAssemblyInfo.cs"
+              ContinueOnError="false"
+              SkipUnchangedFiles="true"
+              OverwriteReadOnlyFiles="true"
+              Retries="$(CopyRetryCount)"
+              RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)" />
+        
+        <!-- NuGet -->
+        <ItemGroup>
+            <_IntermediateSpec Include="**\*.nuspec" />
+        </ItemGroup>
+        
+        <Copy SourceFiles="@(_IntermediateSpec)" DestinationFolder="$(OutputPath)..\..\" ContinueOnError="false" />
+
+        <ItemGroup>
+            <_OutputSpec Include="$(OutputPath)..\..\*.nuspec" />
+        </ItemGroup>
+
+        <!-- Finally build the package -->
+        <Exec Command="$(NuGetExe) pack -NoPackageAnalysis &quot;@(_OutputSpec)&quot; -Symbols -OutputDirectory &quot;$(OutputPath)..\..\&quot;"
+              Condition="'@(_OutputSpec)' != ''"
+              ContinueOnError="false" />
     </Target>
 </Project>
