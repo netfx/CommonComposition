@@ -1,4 +1,4 @@
-Common Composition
+![Icon](https://raw.github.com/clariuslabs/CommonComposition/master/noun_project_3427.png) Common Composition
 =================
 
 Portable component composition annotations, dependency injection framework agnostic.
