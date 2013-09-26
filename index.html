@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Common Composition by clariuslabs</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/clariuslabs/CommonComposition">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/clariuslabs/CommonComposition/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/clariuslabs/CommonComposition/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Common Composition</h1>
+          <p>Portable component composition annotations, dependency injection framework agnostic.</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/clariuslabs">clariuslabs</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
+<a name="common-composition" class="anchor" href="#common-composition"><span class="octicon octicon-link"></span></a>Common Composition</h1>
+
+<p>Portable component composition annotations, dependency injection framework agnostic.</p>
+
+<h2>
+<a name="why" class="anchor" href="#why"><span class="octicon octicon-link"></span></a>Why</h2>
+
+<p>Typically, application logic doesn't require deep knowledge of specific dependency injection framework features, APIs and extensibility points. It can even be considered a best practice to keep your logic code devoid of specific DI frameworks types and quirks. </p>
+
+<p>Most frameworks today allow for convention-based registration of components (like "register all concrete types with their implemented interfaces"). A typical annotation that's usually needed is whether the registered component should be instantiated only once in a container and reused (like a container-scoped singleton) or if a new instance should be created every time the component is requested. </p>
+
+<p>It would be clearly desirable to be able to express that type of annotation (as well as whether a type should be registered for composition at all) in a framework agnostic way. That's precisely what Common Composition is for. </p>
+
+<p>The Common Composition provides basic annotation attributes you need to specify how components should be composed in a dependency injection container. It allows your application logic to remain DI framework agnostic while still leveraging the benefits of convention-based configuration.</p>
+
+<p>In addition, Common Composition will provide a set of default configurations for various containers so that the behave consistently with regards to some common relationship types, such as dependencies on Func factories, IEnumerable, etc.</p>
+
+<h3>
+<a name="what-about-common-service-locator" class="anchor" href="#what-about-common-service-locator"><span class="octicon octicon-link"></span></a>What about Common Service Locator?</h3>
+
+<p>The <a href="http://commonservicelocator.codeplex.com/">Common Service Locator</a> project also provides an abstraction over IoC containers, but it's intended consumers are other frameworks, not application code. So much that a Service Locator is considered by most to be an <a href="https://www.google.com.ar/search?q=service+locator+anti+pattern">anti-pattern</a>. </p>
+
+<p>Your application code should clearly NOT depend on that abstraction.</p>
+
+<h2>
+<a name="what" class="anchor" href="#what"><span class="octicon octicon-link"></span></a>What</h2>
+
+<p>The goal is to keep the annotations you make on your application logic to a minimum. Currently, you can annotate your types that should be registered for composition with the <code>[ComponentAttribute]</code>:</p>
+
+<pre><code>[Component(IsSingleton = false)]
+public class Foo : IFoo
+{
+    public Foo(IBar bar)
+    {
+        this.Bar = bar;
+    }
+
+    public IBar Bar { get; private set; }
+}
+
+[Component(IsSingleton = true)]
+internal class Bar : IBar { } 
+
+public interface IComponent { }
+public interface IFoo : IComponent { }
+public interface IBar : IComponent { }
+</code></pre>
+
+<p>Under Common Composition conventions, all major dependency injection frameworks (Autofac, Ninject, Windsor, Unity and MEF) will make both Foo and Bar available (note Bar is an internal class), and resolving all IComponent instances will shield both Foo and Bar. Also, resolving twice the Bar/IBar component will return the same instance, since it's configured to be a singleton.</p>
+
+<p>A common set of unit tests that run and are required to pass on all supported containers, ensures this common set of behaviors. </p>
+
+<p>Here's how to leverage Common Composition on each of the supported frameworks:</p>
+
+<ol>
+<li>
+<p>Autofac:</p>
+
+<pre><code>    var builder = new ContainerBuilder();
+    builder.RegisterComponents(typeof(IFoo).Assembly);
+
+    var container = builder.Build();
+</code></pre>
+</li>
+<li>
+<p>Ninject:</p>
+
+<pre><code>    var kernel = new Ninject.StandardKernel();
+
+    kernel.RegisterComponents(typeof(IFoo).Assembly);
+</code></pre>
+</li>
+<li>
+<p>Windsor:</p>
+
+<pre><code>    var container = new WindsorContainer();
+
+    container.RegisterComponents(typeof(IFoo).Assembly);
+</code></pre>
+</li>
+<li>
+<p>Unity:</p>
+
+<pre><code>    var container = new UnityContainer();
+
+    container.RegisterComponents(typeof(IFoo).Assembly);
+</code></pre>
+</li>
+<li>
+<p>MEF:</p>
+
+<pre><code>    var catalog = new ComponentCatalog(typeof(IFoo).Assembly);
+    var container = new CompositionContainer(catalog);
+</code></pre>
+</li>
+</ol><h2>
+<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h2>
+
+<p>On your application logic projects:</p>
+
+<pre><code>        install-package CommonComposition
+</code></pre>
+
+<p>On your application bootstrapping code (i.e. your Main(), or web application startup procedure, etc.), depending on the chosen container implementation:</p>
+
+<pre><code>        install-package CommonComposition.Autofac
+        install-package CommonComposition.Ninject
+        install-package CommonComposition.Windsor
+        install-package CommonComposition.Unity
+        install-package CommonComposition.Mef
+</code></pre>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
