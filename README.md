@@ -4,7 +4,7 @@ Common Composition
 Portable component composition annotations, dependency injection framework agnostic.
 
 ## Why
-The vast majority of needs in application development don't require deep knowledge of specific dependency inject framework features, APIs and extensibility points. 
+Typically, application logic doesn't require deep knowledge of specific dependency injection framework features, APIs and extensibility points. It can even be considered a best practice to keep your logic code devoid of specific DI frameworks types and quirks. 
 
 Most frameworks today allow for convention-based registration of components (like "register all concrete types with their implemented interfaces"). A typical annotation that's usually needed is whether the registered component should be instantiated only once in a container and reused (like a container-scoped singleton) or if a new instance should be created every time the component is requested. 
 
