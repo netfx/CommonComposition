@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Target Name="BeforeBuild">
-        
-    </Target>
-
     <Target Name="AfterBuild" Condition="$(NuGet) == 'true'">
         <!-- SymbolSource -->
         <ItemGroup>
-            <SymbolSource Include="**\*.cs" Exclude="nuget\**\*.cs">
+            <SymbolSource Include="**\*.cs" Exclude="bin\**\*.cs">
                 <Visible>False</Visible>
             </SymbolSource>
-            <SymbolSource Include="**\*.xaml" Exclude="nuget\**\*.xaml">
+            <SymbolSource Include="**\*.xaml" Exclude="bin\**\*.xaml">
                 <Visible>False</Visible>
             </SymbolSource>
             <SymbolSource Include="$(IntermediateOutputPath)**\*.cs">
@@ -19,34 +15,23 @@
         </ItemGroup>
 
         <Copy SourceFiles="@(SymbolSource)"
-              DestinationFiles="@(SymbolSource->'$(OutputPath)..\..\src\%(RecursiveDir)%(Filename)%(Extension)')"
+              DestinationFiles="@(SymbolSource->'$(PackageRoot)\src\%(RecursiveDir)%(Filename)%(Extension)')"
               ContinueOnError="false"
               SkipUnchangedFiles="true"
               OverwriteReadOnlyFiles="true"
               Retries="$(CopyRetryCount)"
               RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)" />
         <Copy SourceFiles="$(SolutionDir)GlobalAssemblyInfo.cs"
-              DestinationFiles="$(OutputPath)..\..\src\Properties\GlobalAssemblyInfo.cs"
+              DestinationFiles="$(PackageRoot)\src\Properties\GlobalAssemblyInfo.cs"
               ContinueOnError="false"
               SkipUnchangedFiles="true"
               OverwriteReadOnlyFiles="true"
               Retries="$(CopyRetryCount)"
               RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)" />
         
-        <!-- NuGet -->
-        <ItemGroup>
-            <_IntermediateSpec Include="**\*.nuspec" />
-        </ItemGroup>
-        
-        <Copy SourceFiles="@(_IntermediateSpec)" DestinationFolder="$(OutputPath)..\..\" ContinueOnError="false" />
-
-        <ItemGroup>
-            <_OutputSpec Include="$(OutputPath)..\..\*.nuspec" />
-        </ItemGroup>
-
         <!-- Finally build the package -->
-        <Exec Command="$(NuGetExe) pack -NoPackageAnalysis &quot;@(_OutputSpec)&quot; -Symbols -OutputDirectory &quot;$(OutputPath)..\..\&quot;"
-              Condition="'@(_OutputSpec)' != ''"
+        <Exec Command="&quot;$(NuGetExe)&quot; Pack -NoPackageAnalysis &quot;%(NuSpec.FullPath)&quot; -BasePath &quot;$(PackageRoot)&quot; -Symbols -OutputDirectory &quot;$(PackageRoot)&quot;"
+              LogStandardErrorAsError="true"
               ContinueOnError="false" />
     </Target>
 </Project>

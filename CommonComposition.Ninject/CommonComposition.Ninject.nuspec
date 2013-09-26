@@ -1,24 +1,21 @@
 <?xml version="1.0"?>
 <package>
     <metadata>
-        <id>CommonComposition</id>
+        <id>CommonComposition.Ninject</id>
         <version>0.1.1309.2622</version>
-        <title>CommonComposition</title>
+        <title>CommonComposition.Ninject</title>
         <authors>Daniel Cazzulino</authors>
         <owners>danielkzu, clariuslabs</owners>
         <licenseUrl>https://raw.github.com/clariuslabs/CommonComposition/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/clariuslabs/CommonComposition</projectUrl>
         <iconUrl>http://clarius.io/commoncomposition</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Portable component composition annotations, dependency injection framework agnostic.
-        
-Automatically register your application components by convention with the most popular DI frameworks, while keeping your code container-agnostic.</description>
-        <releaseNotes>v0.1
-
-* Initial ComponentAttribute annotation, with IsSingleton support
-* Bindings for Autofac, MEF, Ninject, Unity and Windsor
-</releaseNotes>
+        <description>Provides the Common Composition bindings for Ninject.</description>
         <copyright>Copyright 2013, ClariusLabs under Apache 2.0 license</copyright>
         <tags>dependency injection di extensibility composition</tags>
+        <dependencies>
+            <dependency id="CommonComposition" version="0.1"/>
+            <dependency id="Ninject" version="3.0" />
+        </dependencies>
     </metadata>
 </package>
