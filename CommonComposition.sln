@@ -1,0 +1,66 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.20827.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition", "Source\CommonComposition.csproj", "{5EDC8001-5B18-40C8-A0BA-E749C546B684}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Autofac", "CommonComposition.Autofac\CommonComposition.Autofac.csproj", "{6D086DF5-B8E5-444C-9198-663C76ACBBEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Mef", "CommonComposition.Mef\CommonComposition.Mef.csproj", "{4262475F-B6D3-4CE3-85BD-AEDEB3A63DBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Tests", "..\CommonComposition.Tests\CommonComposition.Tests.csproj", "{C05417D0-5374-4D8E-A0BA-41C6CF3E6C08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Unity", "CommonComposition.Unity\CommonComposition.Unity.csproj", "{973587EC-7CD5-4F26-82B9-EFA74390C553}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Windsor", "CommonComposition.Windsor\CommonComposition.Windsor.csproj", "{D04B4A45-368F-463E-AD9D-C40A5702CD46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Ninject", "CommonComposition.Ninject\CommonComposition.Ninject.csproj", "{0215E667-DAD8-4A7E-AEFD-43919006D960}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{0FB7B7BF-C49E-40BE-9CEB-B40D31485D5B}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5EDC8001-5B18-40C8-A0BA-E749C546B684}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EDC8001-5B18-40C8-A0BA-E749C546B684}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EDC8001-5B18-40C8-A0BA-E749C546B684}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EDC8001-5B18-40C8-A0BA-E749C546B684}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D086DF5-B8E5-444C-9198-663C76ACBBEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D086DF5-B8E5-444C-9198-663C76ACBBEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D086DF5-B8E5-444C-9198-663C76ACBBEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D086DF5-B8E5-444C-9198-663C76ACBBEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4262475F-B6D3-4CE3-85BD-AEDEB3A63DBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4262475F-B6D3-4CE3-85BD-AEDEB3A63DBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4262475F-B6D3-4CE3-85BD-AEDEB3A63DBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4262475F-B6D3-4CE3-85BD-AEDEB3A63DBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C05417D0-5374-4D8E-A0BA-41C6CF3E6C08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C05417D0-5374-4D8E-A0BA-41C6CF3E6C08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C05417D0-5374-4D8E-A0BA-41C6CF3E6C08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C05417D0-5374-4D8E-A0BA-41C6CF3E6C08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{973587EC-7CD5-4F26-82B9-EFA74390C553}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{973587EC-7CD5-4F26-82B9-EFA74390C553}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{973587EC-7CD5-4F26-82B9-EFA74390C553}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{973587EC-7CD5-4F26-82B9-EFA74390C553}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D04B4A45-368F-463E-AD9D-C40A5702CD46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D04B4A45-368F-463E-AD9D-C40A5702CD46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D04B4A45-368F-463E-AD9D-C40A5702CD46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D04B4A45-368F-463E-AD9D-C40A5702CD46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0215E667-DAD8-4A7E-AEFD-43919006D960}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0215E667-DAD8-4A7E-AEFD-43919006D960}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0215E667-DAD8-4A7E-AEFD-43919006D960}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0215E667-DAD8-4A7E-AEFD-43919006D960}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
