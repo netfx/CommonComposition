@@ -38,15 +38,33 @@
         public static void RegisterComponents(this IWindsorContainer container, Action<BasedOnDescriptor> customize, IEnumerable<Type> types)
         {
             var descriptor = Classes.From(types)
-                .Where(t => t.GetCustomAttributes(true).OfType<ComponentAttribute>().Any())
+                .Where(t => t.GetCustomAttributes(typeof(ComponentAttribute), true).OfType<ComponentAttribute>().Any())
                 .WithServiceAllInterfaces()
                 .WithServiceSelf()
                 .Configure(reg =>
                 {
-                    if (reg.Implementation.GetCustomAttributes(true).OfType<ComponentAttribute>().First().IsSingleton)
+                    if (reg.Implementation.GetCustomAttributes(typeof(ComponentAttribute), true).OfType<ComponentAttribute>().First().IsSingleton)
                         reg.LifestyleSingleton();
                     else
                         reg.LifestyleTransient();
+
+                    var named = reg.Implementation.GetCustomAttributes(typeof(NamedAttribute), true)
+                        .OfType<NamedAttribute>()
+                        .Select(x => x.Name)
+                        .FirstOrDefault();
+
+                    if (named != null)
+                        reg.Named(named);
+
+                    var ctor = reg.Implementation.GetConstructors()
+                        .OrderByDescending(c => c.GetParameters().Length).First();
+
+                    foreach (var prm in ctor.GetParameters()
+                        .Select(x => new { Parameter = x, Named = x.GetCustomAttributes(typeof(NamedAttribute), true).OfType<NamedAttribute>().FirstOrDefault() })
+                        .Where(x => x.Named != null))
+                    {
+                        reg.DependsOn(Parameter.ForKey(prm.Parameter.Name).Eq("${" + prm.Named.Name + "}"));
+                    }
                 });
 
             if (customize != null)

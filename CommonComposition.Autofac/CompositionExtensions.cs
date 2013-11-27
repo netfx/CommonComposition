@@ -40,15 +40,28 @@
         {
             var registration = builder
                 .RegisterTypes(types.Where(t => t.GetCustomAttributes(true).OfType<ComponentAttribute>().Any()).ToArray())
-                // Allow non-public constructors just like MEF does.
-                .FindConstructorsWith(t => t.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
                 .AsSelf()
-                .AsImplementedInterfaces()
-                .PropertiesAutowired(PropertyWiringOptions.PreserveSetValues);
+                .AsImplementedInterfaces();
+                // TODO: auto-set properties?
+                //.PropertiesAutowired(PropertyWiringOptions.PreserveSetValues);
 
-            // Optionally set the SingleInstance behavior.
+            registration.As(t => 
+            {
+                var name = t.GetCustomAttributes(true).OfType<NamedAttribute>().Select(x => x.Name).FirstOrDefault();
+                if (string.IsNullOrEmpty(name))
+                    return Enumerable.Empty<Service>();
+
+                return t.GetInterfaces()
+                    .Where(i => i != typeof(IDisposable))
+                    .Select(i => new KeyedService(name, i))
+                    .Concat(new[] { new KeyedService(name, t) })
+                    .ToArray();
+            });
+
             registration.ActivatorData.ConfigurationActions.Add((t, rb) =>
             {
+                // Optionally set the SingleInstance behavior.
+                // TODO: check SingletonScope
                 if (rb.ActivatorData.ImplementationType.GetCustomAttributes(true).OfType<ComponentAttribute>().First().IsSingleton)
                     rb.SingleInstance();
             });

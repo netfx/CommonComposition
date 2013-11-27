@@ -6,6 +6,8 @@
     using System;
     using System.Linq;
     using System.Reflection;
+    using System.Xml.Linq;
+    using System.Xml.XPath;
     using Xunit;
 
     public class UnityFixture : CompositionFixture

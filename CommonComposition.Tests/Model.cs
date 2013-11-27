@@ -21,4 +21,26 @@
 
     [Component(IsSingleton = true)]
     internal class Bar : IBar, INamed { }
+
+    public interface IKeyed { }
+
+    [Component]
+    [Named("Keyed2")]
+    public class Keyed2 : IKeyed { }
+
+    [Component]
+    [Named("Keyed")]
+    public class Keyed : IKeyed { }
+
+    [Component]
+    public class ComponentWithKeyed
+    {
+        public ComponentWithKeyed(
+            [Named("Keyed")] IKeyed dep)
+        {
+            this.Dep = dep;
+        }
+
+        public IKeyed Dep { get; private set; }
+    }
 }

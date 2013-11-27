@@ -50,15 +50,30 @@
 
         private class ComponentsReflectionContext : CustomReflectionContext
         {
+            protected override IEnumerable<object> GetCustomAttributes(ParameterInfo parameter, IEnumerable<object> declaredAttributes)
+            {
+                var withKey = parameter.GetCustomAttribute<NamedAttribute>();
+                if (withKey == null)
+                    return base.GetCustomAttributes(parameter, declaredAttributes);
+
+                // Inject the import attribute with the custom key.
+                return base.GetCustomAttributes(parameter, declaredAttributes).Concat(new[] 
+                {
+                    new ImportAttribute(withKey.Name)
+                });
+            }
+
             protected override IEnumerable<object> GetCustomAttributes(MemberInfo member, IEnumerable<object> declaredAttributes)
             {
                 var type = member as Type;
                 var ctor = member as ConstructorInfo;
 
-                if (ctor != null && ctor == ctor.DeclaringType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-                    .OrderByDescending(c => c.GetParameters().Length).First())
+                // Automatically injects the [ImportingConstructor] attribute to the ctor
+                // with the most parameters.
+                if (ctor != null && 
+                    ctor == ctor.DeclaringType.GetConstructors().OrderByDescending(c => c.GetParameters().Length).First())
                 {
-                    return declaredAttributes.Concat(new[] { new ImportingConstructorAttribute() });
+                    return base.GetCustomAttributes(member, declaredAttributes).Concat(new[] { new ImportingConstructorAttribute() });
                 }
 
                 if (type == null)
@@ -66,17 +81,27 @@
 
                 var component = type.GetCustomAttribute<ComponentAttribute>(true);
                 if (component == null)
-                    return declaredAttributes;
+                    return base.GetCustomAttributes(member, declaredAttributes);
 
                 var additionalAttributes = new List<object>();
 
                 var policy = component.IsSingleton ? CreationPolicy.Shared : CreationPolicy.NonShared;
                 additionalAttributes.Add(new PartCreationPolicyAttribute(policy));
 
-                additionalAttributes.Add(new ExportAttribute(type));
-                additionalAttributes.AddRange(type.GetInterfaces().Select(i => new ExportAttribute(i)));
+                var named = type.GetCustomAttribute<NamedAttribute>(true);
 
-                return declaredAttributes.Concat(additionalAttributes);
+                if (named == null)
+                {
+                    additionalAttributes.Add(new ExportAttribute(type));
+                    additionalAttributes.AddRange(type.GetInterfaces().Select(i => new ExportAttribute(i)));
+                }
+                else
+                {
+                    additionalAttributes.Add(new ExportAttribute(named.Name, type));
+                    additionalAttributes.AddRange(type.GetInterfaces().Select(i => new ExportAttribute(named.Name, i)));
+                }
+
+                return base.GetCustomAttributes(member, declaredAttributes).Concat(additionalAttributes);
             }
         }
     }

@@ -61,5 +61,30 @@
 
             Assert.NotSame(foo1, foo2);
         }
+
+        [Fact]
+        public void when_resolving_keyed_component_then_succeeds()
+        {
+            var bar = ServiceLocator.GetInstance<IKeyed>("Keyed");
+
+            Assert.NotNull(bar);
+        }
+
+        [Fact]
+        public void when_resolving_keyed_component_by_implementation_then_succeeds()
+        {
+            var bar = ServiceLocator.GetInstance<Keyed>("Keyed");
+            
+            Assert.NotNull(bar);
+        }
+
+        [Fact]
+        public void when_resolving_component_with_keyed_dependency_then_succeeds()
+        {
+            var foo = ServiceLocator.GetInstance<ComponentWithKeyed>();
+
+            Assert.NotNull(foo);
+            Assert.IsType<Keyed>(foo.Dep);
+        }
     }
 }
