@@ -1,6 +1,5 @@
 ﻿namespace CommonComposition.Tests
 {
-    using CommonComposition.Mef;
     using Microsoft.Practices.ServiceLocation;
     using System;
     using System.ComponentModel.Composition.Hosting;

@@ -1,4 +1,4 @@
-﻿namespace CommonComposition.Mef
+﻿namespace CommonComposition
 {
     using System;
     using System.Collections.Generic;
@@ -7,6 +7,7 @@
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
+
     public class ComponentCatalog : TypeCatalog
     {
         public ComponentCatalog(params Assembly[] assemblies)

@@ -1,13 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.20827.3
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition", "CommonComposition\CommonComposition.csproj", "{5EDC8001-5B18-40C8-A0BA-E749C546B684}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Autofac", "CommonComposition.Autofac\CommonComposition.Autofac.csproj", "{6D086DF5-B8E5-444C-9198-663C76ACBBEB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Mef", "CommonComposition.Mef\CommonComposition.Mef.csproj", "{4262475F-B6D3-4CE3-85BD-AEDEB3A63DBB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E5BB8006-2E2A-417E-AA98-72FA260057CB} = {E5BB8006-2E2A-417E-AA98-72FA260057CB}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Tests", "CommonComposition.Tests\CommonComposition.Tests.csproj", "{C05417D0-5374-4D8E-A0BA-41C6CF3E6C08}"
 EndProject
@@ -38,6 +41,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 		ReleaseNotes.md = ReleaseNotes.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Microsoft", "CommonComposition.Microsoft\CommonComposition.Microsoft.csproj", "{E5BB8006-2E2A-417E-AA98-72FA260057CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Microsoft.Tests", "CommonComposition.Microsoft.Tests\CommonComposition.Microsoft.Tests.csproj", "{0C7EC7AC-FBEC-4DEC-9954-4FE7C832C4B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +80,14 @@ Global
 		{0215E667-DAD8-4A7E-AEFD-43919006D960}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0215E667-DAD8-4A7E-AEFD-43919006D960}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0215E667-DAD8-4A7E-AEFD-43919006D960}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5BB8006-2E2A-417E-AA98-72FA260057CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5BB8006-2E2A-417E-AA98-72FA260057CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5BB8006-2E2A-417E-AA98-72FA260057CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5BB8006-2E2A-417E-AA98-72FA260057CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C7EC7AC-FBEC-4DEC-9954-4FE7C832C4B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C7EC7AC-FBEC-4DEC-9954-4FE7C832C4B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C7EC7AC-FBEC-4DEC-9954-4FE7C832C4B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C7EC7AC-FBEC-4DEC-9954-4FE7C832C4B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

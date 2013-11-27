@@ -20,7 +20,7 @@
     }
 
     [Component(IsSingleton = true)]
-    internal class Bar : IBar, INamed { }
+    public class Bar : IBar, INamed { }
 
     public interface IKeyed { }
 

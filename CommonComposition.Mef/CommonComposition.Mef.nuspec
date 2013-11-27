@@ -2,7 +2,7 @@
 <package xmlns="">
     <metadata>
         <id>CommonComposition.Mef</id>
-        <version>0.1.1309.2622</version>
+        <version>0.1.1311.2722</version>
         <title>CommonComposition.Mef</title>
         <authors>ClariusLabs</authors>
         <owners>danielkzu, clariuslabs</owners>
@@ -14,10 +14,16 @@
         <copyright>Copyright 2013, ClariusLabs under Apache 2.0 license</copyright>
         <tags>dependency injection di extensibility composition</tags>
         <frameworkAssemblies>
-            <frameworkAssembly assemblyName="System.ComponentModel.Composition" targetFramework="net45" />
+            <frameworkAssembly assemblyName="System.ComponentModel.Composition" targetFramework="net40" />
         </frameworkAssemblies>
         <dependencies>
-            <dependency id="CommonComposition" version="0.1"/>
+            <group targetFramework="net40">
+                <dependency id="CommonComposition" version="0.1"/>
+            </group>
+            <group targetFramework="portable-net45+win8">
+                <dependency id="CommonComposition" version="0.1"/>
+                <dependency id="Microsoft.Composition" version="1.0" />
+            </group>
         </dependencies>
     </metadata>
 </package>

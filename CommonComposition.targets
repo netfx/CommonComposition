@@ -14,15 +14,16 @@
             </SymbolSource>
         </ItemGroup>
 
+        <Message Importance="high" Text="ProjectName: $(MSBuildProjectName)" />
         <Copy SourceFiles="@(SymbolSource)"
-              DestinationFiles="@(SymbolSource->'$(PackageRoot)\src\%(RecursiveDir)%(Filename)%(Extension)')"
+              DestinationFiles="@(SymbolSource->'$(PackageRoot)\src\$(MSBuildProjectName)\%(RecursiveDir)%(Filename)%(Extension)')"
               ContinueOnError="false"
               SkipUnchangedFiles="true"
               OverwriteReadOnlyFiles="true"
               Retries="$(CopyRetryCount)"
               RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)" />
         <Copy SourceFiles="$(SolutionDir)GlobalAssemblyInfo.cs"
-              DestinationFiles="$(PackageRoot)\src\Properties\GlobalAssemblyInfo.cs"
+              DestinationFiles="$(PackageRoot)\src\$(MSBuildProjectName)\Properties\GlobalAssemblyInfo.cs"
               ContinueOnError="false"
               SkipUnchangedFiles="true"
               OverwriteReadOnlyFiles="true"
@@ -31,6 +32,7 @@
         
         <!-- Finally build the package -->
         <Exec Command="&quot;$(NuGetExe)&quot; Pack -NoPackageAnalysis &quot;%(NuSpec.FullPath)&quot; -BasePath &quot;$(PackageRoot)&quot; -Symbols -OutputDirectory &quot;$(PackageRoot)&quot;"
+              Condition="'@(NuSpec)' != ''"
               LogStandardErrorAsError="true"
               ContinueOnError="false" />
     </Target>

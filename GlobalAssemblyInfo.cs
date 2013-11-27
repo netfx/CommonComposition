@@ -9,11 +9,11 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("CommonComposition")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.1.1309.2622")]
-[assembly: AssemblyFileVersion("0.1.1309.2622")]
+[assembly: AssemblyVersion("0.1.1311.2722")]
+[assembly: AssemblyFileVersion("0.1.1311.2722")]
 
 // This attribute should be the SemanticVersion one.
-[assembly: AssemblyInformationalVersion("0.1.1309.2622")]
+[assembly: AssemblyInformationalVersion("0.1.1311.2722")]
 
 [assembly: NeutralResourcesLanguage("en")]
 
