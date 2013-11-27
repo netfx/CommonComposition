@@ -12,7 +12,12 @@
         public MefFixture()
             : base(BuildLocator())
         {
+        }
 
+        [Fact]
+        public void when_action_then_assert()
+        {
+            when_resolving_non_singleton_twice_then_returns_new_instance();
         }
 
         private static IServiceLocator BuildLocator()

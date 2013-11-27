@@ -4,10 +4,9 @@
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
     using System.ComponentModel.Composition.Hosting;
+    using System.Globalization;
     using System.Linq;
     using System.Reflection;
-    using System.Reflection.Context;
-
     public class ComponentCatalog : TypeCatalog
     {
         public ComponentCatalog(params Assembly[] assemblies)
@@ -21,87 +20,153 @@
         }
 
         public ComponentCatalog(IEnumerable<Type> types)
-            : base(types.Where(t => t.GetCustomAttribute<ComponentAttribute>(true) != null), CreateRegistration(types))
+            : base(types.Where(t => t.IsDefined(typeof(ComponentAttribute), true) && !t.IsAbstract).Select(t => new ComponentType(t)))
         {
         }
 
-        private static ReflectionContext CreateRegistration(IEnumerable<Type> types)
+        private class ComponentType : TypeDelegator
         {
-            return new ComponentsReflectionContext();
+            private Type type;
+            private Lazy<ComponentAttribute> component;
+            private Lazy<object[]> additionalAttributes;
+            private Lazy<PartCreationPolicyAttribute[]> creationAttributes;
+            private Lazy<ExportAttribute[]> exportAttributes;
+            private Lazy<string> name;
 
-            // Alternative implementation using the new registration conventions.
-            // Unfortunately, this does not allow non-public constructors.
-            //var builder = new RegistrationBuilder();
-
-            //foreach (var info in types
-            //    .Select(t => new { Type = t, Component = t.GetCustomAttribute<ComponentAttribute>(true) })
-            //    .Where(info => info.Component != null))
-            //{
-            //    var policy = info.Component.IsSingleton ? CreationPolicy.Shared : CreationPolicy.NonShared;
-            //    var part = builder.ForType(info.Type)
-            //        .Export()
-            //        .ExportInterfaces()
-            //        .SelectConstructor(ctors => ctors.OrderByDescending(ctor => ctor.GetParameters().Length).First())
-            //        .SetCreationPolicy(policy);
-            //}
-
-            //return builder;
-        }
-
-        private class ComponentsReflectionContext : CustomReflectionContext
-        {
-            protected override IEnumerable<object> GetCustomAttributes(ParameterInfo parameter, IEnumerable<object> declaredAttributes)
+            public ComponentType(Type type)
+                : base(type)
             {
-                var withKey = parameter.GetCustomAttribute<NamedAttribute>();
-                if (withKey == null)
-                    return base.GetCustomAttributes(parameter, declaredAttributes);
+                this.type = type;
+                this.component = new Lazy<ComponentAttribute>(() =>
+                    type.GetCustomAttributes(typeof(ComponentAttribute), true).OfType<ComponentAttribute>().First());
 
-                // Inject the import attribute with the custom key.
-                return base.GetCustomAttributes(parameter, declaredAttributes).Concat(new[] 
+                this.exportAttributes = new Lazy<ExportAttribute[]>(() =>
                 {
-                    new ImportAttribute(withKey.Name)
+                    var exports = new List<ExportAttribute>();
+                    exports.Add(new ExportAttribute(name.Value, type));
+                    exports.AddRange(type
+                        .GetInterfaces()
+                        .Where(i => i != typeof(IDisposable))
+                        .Select(i => new ExportAttribute(name.Value, i)));
+
+                    return exports.ToArray();
                 });
+
+                this.creationAttributes = new Lazy<PartCreationPolicyAttribute[]>(() =>
+                    new PartCreationPolicyAttribute[] { new PartCreationPolicyAttribute(component.Value.IsSingleton ? CreationPolicy.Shared : CreationPolicy.NonShared) });
+
+                this.additionalAttributes = new Lazy<object[]>(() => new object[0].Concat(exportAttributes.Value).Concat(creationAttributes.Value).ToArray());
+
+                this.name = new Lazy<string>(() => type
+                    .GetCustomAttributes(typeof(NamedAttribute), true)
+                    .OfType<NamedAttribute>()
+                    .Select(x => x.Name)
+                    .FirstOrDefault());
             }
 
-            protected override IEnumerable<object> GetCustomAttributes(MemberInfo member, IEnumerable<object> declaredAttributes)
+            public override bool IsDefined(Type attributeType, bool inherit)
             {
-                var type = member as Type;
-                var ctor = member as ConstructorInfo;
+                if (attributeType == typeof(ExportAttribute) ||
+                    attributeType == typeof(InheritedExportAttribute) ||
+                    attributeType == typeof(PartCreationPolicyAttribute))
+                    return true;
 
-                // Automatically injects the [ImportingConstructor] attribute to the ctor
-                // with the most parameters.
-                if (ctor != null && 
-                    ctor == ctor.DeclaringType.GetConstructors().OrderByDescending(c => c.GetParameters().Length).First())
+                return base.IsDefined(attributeType, inherit);
+            }
+
+            public override object[] GetCustomAttributes(bool inherit)
+            {
+                return base.GetCustomAttributes(inherit).Concat(additionalAttributes.Value).ToArray();
+            }
+
+            public override object[] GetCustomAttributes(Type attributeType, bool inherit)
+            {
+                if (attributeType == typeof(ExportAttribute))
+                    return exportAttributes.Value;
+                else if (attributeType == typeof(PartCreationPolicyAttribute))
+                    return creationAttributes.Value;
+
+                return base.GetCustomAttributes(attributeType, inherit);
+            }
+
+            public override ConstructorInfo[] GetConstructors(BindingFlags bindingAttr)
+            {
+                var ctor = base.GetConstructors(bindingAttr).OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
+                if (ctor != null)
+                    return new ConstructorInfo[] { new ImportingConstructorInfo(ctor) };
+
+                return new ConstructorInfo[0];
+            }
+
+            private class ImportingConstructorInfo : DelegatingConstructorInfo
+            {
+                private Lazy<ParameterInfo[]> parameters;
+
+                public ImportingConstructorInfo(ConstructorInfo constructor)
+                    : base(constructor)
                 {
-                    return base.GetCustomAttributes(member, declaredAttributes).Concat(new[] { new ImportingConstructorAttribute() });
+                    this.parameters = new Lazy<ParameterInfo[]>(() => constructor.GetParameters().Select(x => new ImportedParameterInfo(x)).ToArray());
                 }
 
-                if (type == null)
-                    return declaredAttributes;
-
-                var component = type.GetCustomAttribute<ComponentAttribute>(true);
-                if (component == null)
-                    return base.GetCustomAttributes(member, declaredAttributes);
-
-                var additionalAttributes = new List<object>();
-
-                var policy = component.IsSingleton ? CreationPolicy.Shared : CreationPolicy.NonShared;
-                additionalAttributes.Add(new PartCreationPolicyAttribute(policy));
-
-                var named = type.GetCustomAttribute<NamedAttribute>(true);
-
-                if (named == null)
+                public override bool IsDefined(Type attributeType, bool inherit)
                 {
-                    additionalAttributes.Add(new ExportAttribute(type));
-                    additionalAttributes.AddRange(type.GetInterfaces().Select(i => new ExportAttribute(i)));
-                }
-                else
-                {
-                    additionalAttributes.Add(new ExportAttribute(named.Name, type));
-                    additionalAttributes.AddRange(type.GetInterfaces().Select(i => new ExportAttribute(named.Name, i)));
+                    if (attributeType == typeof(ImportingConstructorAttribute))
+                        return true;
+
+                    return base.IsDefined(attributeType, inherit);
                 }
 
-                return base.GetCustomAttributes(member, declaredAttributes).Concat(additionalAttributes);
+                public override object[] GetCustomAttributes(Type attributeType, bool inherit)
+                {
+                    if (attributeType == typeof(ImportingConstructorAttribute))
+                        return new ImportingConstructorAttribute[] { new ImportingConstructorAttribute() };
+
+                    return base.GetCustomAttributes(attributeType, inherit);
+                }
+
+                public override object[] GetCustomAttributes(bool inherit)
+                {
+                    return base.GetCustomAttributes(inherit)
+                        .Concat(new ImportingConstructorAttribute[] { new ImportingConstructorAttribute() })
+                        .ToArray();
+                }
+
+                public override ParameterInfo[] GetParameters()
+                {
+                    return parameters.Value;
+                }
+            }
+
+            private class ImportedParameterInfo : DelegatingParameterInfo
+            {
+                private ImportAttribute import;
+
+                public ImportedParameterInfo(ParameterInfo parameter)
+                    : base(parameter)
+                {
+                    var name = parameter.GetCustomAttributes(typeof(NamedAttribute), true)
+                        .OfType<NamedAttribute>()
+                        .Select(x => x.Name)
+                        .FirstOrDefault();
+
+                    this.import = new ImportAttribute(name);
+                }
+
+                public override bool IsDefined(Type attributeType, bool inherit)
+                {
+                    return base.IsDefined(attributeType, inherit);
+                }
+
+                public override object[] GetCustomAttributes(Type attributeType, bool inherit)
+                {
+                    var attrs = base.GetCustomAttributes(attributeType, inherit);
+                    var result = (object[])Array.CreateInstance(attributeType, attrs.Length + 1);
+                    attrs.CopyTo(result, 0);
+                    result[result.Length - 1] = import;
+                    attrs = result;
+
+                    return result;
+                }
             }
         }
     }

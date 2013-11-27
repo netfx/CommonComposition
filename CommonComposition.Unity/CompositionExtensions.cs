@@ -58,7 +58,7 @@
             {
                 this.Context.Registering += OnRegistering;
                 this.Context.Policies.SetDefault<IConstructorSelectorPolicy>(
-                    new WithKeyConstructorSelectorPolicy());
+                    new NamedConstructorSelectorPolicy());
             }
 
             private void OnRegistering(object sender, RegisterEventArgs e)
@@ -92,7 +92,7 @@
             }
         }
 
-        private class WithKeyConstructorSelectorPolicy : DefaultUnityConstructorSelectorPolicy
+        private class NamedConstructorSelectorPolicy : DefaultUnityConstructorSelectorPolicy
         {
             protected override IDependencyResolverPolicy CreateResolver(ParameterInfo parameter)
             {
