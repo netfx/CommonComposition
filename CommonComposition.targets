@@ -52,7 +52,7 @@
     </Target>
     
     <Target Name="BuildPackage" Condition="'@(NuSpec)' != ''">
-        <Exec Command="&quot;$(NuGetExe)&quot; Pack -NoPackageAnalysis &quot;%(NuSpec.FullPath)&quot; -BasePath &quot;$(PackageRoot)&quot; -Symbols -OutputDirectory &quot;$(PackageRoot)&quot;"
+        <Exec Command="&quot;$(NuGetExe)&quot; Pack -NoPackageAnalysis &quot;%(NuSpec.FullPath)&quot; -BasePath &quot;$(PackageRoot)&quot; -Symbols -OutputDirectory &quot;$(PackageRoot)&quot; -Version &quot;$(PackageVersion)&quot;"
               LogStandardErrorAsError="true"
               ContinueOnError="false" />
     </Target>
