@@ -1,43 +1,44 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4262475F-B6D3-4CE3-85BD-AEDEB3A63DBB}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CommonComposition</RootNamespace>
-    <AssemblyName>CommonComposition.Mef</AssemblyName>
-    <FrameworkName>net40</FrameworkName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-  </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDirectory)..\CommonComposition.props" />
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\GlobalAssemblyInfo.cs">
-      <Link>Properties\GlobalAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="ComponentCatalog.cs" />
-    <Compile Include="DelegatingReflection.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CommonComposition\CommonComposition.csproj">
-      <Project>{5edc8001-5b18-40c8-a0ba-e749c546b684}</Project>
-      <Name>CommonComposition</Name>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <NuSpec Include="CommonComposition.Mef.nuspec" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ReleaseNotes.md" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(MSBuildThisFileDirectory)..\CommonComposition.targets" />
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{4262475F-B6D3-4CE3-85BD-AEDEB3A63DBB}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>CommonComposition</RootNamespace>
+        <AssemblyName>CommonComposition.Mef</AssemblyName>
+        <FrameworkName>net40</FrameworkName>
+        <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    </PropertyGroup>
+    <Import Project="$(MSBuildThisFileDirectory)..\CommonComposition.props" />
+    <ItemGroup>
+        <Reference Include="System" />
+        <Reference Include="System.ComponentModel.Composition" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="..\GlobalAssemblyInfo.cs">
+            <Link>Properties\GlobalAssemblyInfo.cs</Link>
+        </Compile>
+        <Compile Include="ComponentCatalog.cs" />
+        <Compile Include="DelegatingReflection.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\CommonComposition\CommonComposition.csproj">
+            <Project>{5edc8001-5b18-40c8-a0ba-e749c546b684}</Project>
+            <Name>CommonComposition</Name>
+            <Private>False</Private>
+        </ProjectReference>
+    </ItemGroup>
+    <ItemGroup>
+        <NuSpec Include="CommonComposition.Mef.nuspec" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="ReleaseNotes.md" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)..\CommonComposition.targets" />
 </Project>

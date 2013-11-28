@@ -13,10 +13,14 @@
         <description>Portable component composition annotations, dependency injection framework agnostic.
         
 Automatically register your application components by convention with the most popular DI frameworks, while keeping your code container-agnostic.</description>
-        <releaseNotes>v0.1
+        <releaseNotes>v0.2
+
+* Added [Named] annotation that is available on components or constructor parameters
+  to specify named components and dependencies
+
+v0.1
 
 * Initial ComponentAttribute annotation, with IsSingleton support
-* Bindings for Autofac, MEF, Ninject, Unity and Windsor
 </releaseNotes>
         <copyright>Copyright 2013, ClariusLabs under Apache 2.0 license</copyright>
         <tags>dependency injection di extensibility composition</tags>

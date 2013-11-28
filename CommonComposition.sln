@@ -24,19 +24,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{0FB7B7
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DF7B6823-9E8D-428B-8615-B5B6510E39BA}"
 	ProjectSection(SolutionItems) = preProject
-		build.bat = build.bat
-		build.proj = build.proj
+		build\build.proj = build\build.proj
 		CommonComposition.props = CommonComposition.props
 		CommonComposition.targets = CommonComposition.targets
 		CommonComposition.tasks = CommonComposition.tasks
 		GlobalAssemblyInfo.cs = GlobalAssemblyInfo.cs
 		LICENSE = LICENSE
+		MyGet.bat = MyGet.bat
 		README.md = README.md
 	EndProjectSection
 EndProject

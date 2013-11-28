@@ -8,13 +8,46 @@
     <PropertyGroup>
         <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
         <PackageVersion Condition="'$(PackageVersion)' == ''">1.0.0</PackageVersion>
+
+        <SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$(MSBuildThisFileDirectory)..\</SolutionDir>
+        <SolutionDir Condition="!HasTrailingSlash('$(SolutionDir)')">$(SolutionDir)\</SolutionDir>
+        <NuGetDir>$(SolutionDir).nuget\</NuGetDir>
+        <NuGetExe>$(NuGetDir)NuGet.exe</NuGetExe>
+
+        <DropsDir>..\drops\</DropsDir>
+        <SourcesDir>$(MSBuildThisFileDirectory)</SourcesDir>
+        <PackagesDir>$(SourcesDir)packages\</PackagesDir>
+        <ContentDir>content\External\</ContentDir>
     </PropertyGroup>
 
-    <Target Name="Build">
+    <Target Name="Build" DependsOnTargets="Clean">
+        <Message Importance="high" Text="Building package version '$(PackageVersion)'" />
+        
         <MSBuild Projects="..\CommonComposition.sln"
-                 Properties="Configuration=$(Configuration); PackageVersion=$(PackageVersion)"
+                 Properties="Configuration=$(Configuration);PackageVersion=$(PackageVersion)"
                  Targets="Rebuild"
                  />
+
+        <ItemGroup>
+            <Package Include="..\**\*.nupkg" Exclude="..\packages\**\*.nupkg" />
+        </ItemGroup>
+
+        <Move SourceFiles="@(Package)" 
+              DestinationFiles="@(Package -> '$(DropsDir)%(Filename)%(Extension)')" />
     </Target>
 
+    <Target Name="Clean">
+        <ItemGroup>
+            <AllFiles Include="..\**\bin\*.nupkg" />
+            <AllDirs Include="@(AllFiles -> '%(RootDir)%(Directory)')" />
+            <AllBin Include="@(AllDirs -> Distinct())" />
+            <Bin Include="@(AllBin -> TrimEnd('\'))" />        
+        </ItemGroup>
+
+        <Exec Command="rmdir &quot;$(DropsDir.TrimEnd('\'))&quot; /S /Q" Condition="Exists('$(DropsDir)')" />
+        <Exec Command="rmdir &quot;$(PackagesDir.TrimEnd('\'))&quot; /S /Q" Condition="Exists('$(PackagesDir)')" />
+        <Exec Command="rmdir &quot;@(Bin)&quot; /S /Q" Condition="'%(Bin.Directory)' != ''"/>
+    </Target>
+
+    <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
 </Project>
