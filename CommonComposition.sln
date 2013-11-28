@@ -37,9 +37,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CommonComposition.tasks = CommonComposition.tasks
 		GlobalAssemblyInfo.cs = GlobalAssemblyInfo.cs
 		LICENSE = LICENSE
-		MasterVersion.txt = MasterVersion.txt
 		README.md = README.md
-		ReleaseNotes.md = ReleaseNotes.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Microsoft", "CommonComposition.Microsoft\CommonComposition.Microsoft.csproj", "{E5BB8006-2E2A-417E-AA98-72FA260057CB}"

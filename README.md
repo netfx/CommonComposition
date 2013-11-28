@@ -35,7 +35,7 @@ The goal is to keep the annotations you make on your application logic to a mini
     }
 
     [Component(IsSingleton = true)]
-    internal class Bar : IBar { } 
+    public class Bar : IBar { } 
 
     public interface IComponent { }
     public interface IFoo : IComponent { }
@@ -78,6 +78,12 @@ Here's how to leverage Common Composition on each of the supported frameworks:
             var catalog = new ComponentCatalog(typeof(IFoo).Assembly);
             var container = new CompositionContainer(catalog);
 
+6. Microsoft.Composition (MEF for Windows Store / NET45:
+
+            var configuration = new ContainerConfiguration();
+            configuration.RegisterComponents(typeof(IFoo).Assembly);
+
+            var container = configuration.CreateContainer();
 
 ## Install
 
