@@ -1,9 +1,7 @@
 ﻿namespace CommonComposition.Tests
 {
     using Microsoft.Practices.ServiceLocation;
-    using System;
     using System.ComponentModel.Composition.Hosting;
-    using System.Linq;
     using Xunit;
 
     public class MefFixture : CompositionFixture

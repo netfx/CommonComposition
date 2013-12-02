@@ -1,7 +1,5 @@
 ﻿namespace CommonComposition.Tests
 {
-    using System;
-    using System.Linq;
 
     public interface INamed { }
     public interface IBase { }

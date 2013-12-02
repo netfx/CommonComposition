@@ -2,10 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Composition.Hosting;
-    using System.Reflection;
-    using System.Linq;
     using System.Composition.Convention;
+    using System.Composition.Hosting;
+    using System.Linq;
+    using System.Reflection;
 
     /// <summary>
     /// Provides automatic component registration by scanning assemblies and types for 

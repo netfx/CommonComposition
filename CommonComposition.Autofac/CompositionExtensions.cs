@@ -1,14 +1,13 @@
 ﻿namespace CommonComposition
 {
+    using Autofac;
+    using Autofac.Builder;
+    using Autofac.Core;
+    using Autofac.Features.Scanning;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using Autofac;
-    using Autofac.Builder;
-    using Autofac.Core;
-    using Autofac.Features.Metadata;
-    using Autofac.Features.Scanning;
 
     /// <summary>
     /// Provides automatic component registration by scanning assemblies and types for 

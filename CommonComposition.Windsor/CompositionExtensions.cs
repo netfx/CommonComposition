@@ -1,6 +1,5 @@
 ﻿namespace CommonComposition
 {
-    using Castle.Components.DictionaryAdapter;
     using Castle.MicroKernel.Registration;
     using Castle.Windsor;
     using System;

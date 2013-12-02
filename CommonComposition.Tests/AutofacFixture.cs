@@ -3,8 +3,6 @@
     using Autofac;
     using Autofac.Extras.CommonServiceLocator;
     using Microsoft.Practices.ServiceLocation;
-    using System;
-    using System.Linq;
 
     public class AutofacFixture : CompositionFixture
     {

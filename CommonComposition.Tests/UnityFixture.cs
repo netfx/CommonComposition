@@ -1,14 +1,7 @@
 ﻿namespace CommonComposition.Tests
 {
-    using Microsoft.Practices.ObjectBuilder2;
     using Microsoft.Practices.ServiceLocation;
     using Microsoft.Practices.Unity;
-    using System;
-    using System.Linq;
-    using System.Reflection;
-    using System.Xml.Linq;
-    using System.Xml.XPath;
-    using Xunit;
 
     public class UnityFixture : CompositionFixture
     {

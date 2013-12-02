@@ -6,8 +6,6 @@
     using System.Collections.Generic;
     using System.Composition;
     using System.Composition.Hosting;
-    using System.Linq;
-    using Xunit;
 
     public class MicrosoftMefFixture : CompositionFixture
     {

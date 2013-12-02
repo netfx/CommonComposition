@@ -1,11 +1,7 @@
 ﻿namespace CommonComposition.Tests
 {
-    using Microsoft.Practices.ServiceLocation;
-    using System;
-    using System.Linq;
-    using Xunit;
-    using System.Reflection;
     using CommonServiceLocator.NinjectAdapter.Unofficial;
+    using Microsoft.Practices.ServiceLocation;
 
     public class NinjectFixture : CompositionFixture
     {

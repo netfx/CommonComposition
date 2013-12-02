@@ -1,13 +1,8 @@
 ﻿namespace CommonComposition.Tests
 {
-    using Castle.MicroKernel.Registration;
     using Castle.Windsor;
-    using Microsoft.Practices.ServiceLocation;
-    using System;
-    using System.Linq;
-    using Xunit;
-    using System.Reflection;
     using CommonServiceLocator.WindsorAdapter.Unofficial;
+    using Microsoft.Practices.ServiceLocation;
 
     public class WindsorFixture : CompositionFixture
     {

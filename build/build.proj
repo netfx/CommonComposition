@@ -73,22 +73,27 @@
         <ReadProject ProjectFile="%(PackageSource.Project)" IncludedItemNames="$(IncludedItemNames)">
             <Output TaskParameter="RootNamespace" PropertyName="RootNamespace" />
             <Output TaskParameter="FrameworkName" PropertyName="FrameworkName" />
-            <Output TaskParameter="Content" ItemName="Content" />
+            <Output TaskParameter="Content" ItemName="_Content" />
         </ReadProject>
         <PropertyGroup>
             <PackageId>%(PackageSource.Id)</PackageId>
             <PackageDir>$(PackagesDir)$(PackageId)\</PackageDir>
             <PackageContentDir>$(PackageDir)content\$(FrameworkName)\External\$(PackageId)\</PackageContentDir>
             <PackageSpec>$(PackageDir)%(PackageSource.Filename)%(PackageSource.Extension)</PackageSpec>
+            <!--
+            We use the same target namespace for all packages
+            <ContentNamespace>$(PackageId)</ContentNamespace>
+            -->
+            
         </PropertyGroup>
 
         <ItemGroup>
+            <Content Include="@(_Content)"
+                     Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('%(_Content.Filename)', 'AssemblyInfo')) And !$([System.Text.RegularExpressions.Regex]::IsMatch('%(_Content.Filename)', 'GlobalSuppressions'))" />
+            
             <!-- Append destination location metadata to all content -->
+            <!-- Make all content files transformable -->
             <Content Condition="'%(Content.Identity)' != ''">
-                <Destination>@(Content -> '$(PackageContentDir)%(RelativePath)%(Filename)%(Extension)')</Destination>
-            </Content>
-            <!-- Make .Resources.Designer aware of the target project assembly name. -->
-            <Content Condition="'%(Content.Filename)' == 'Resources.Designer'">
                 <Destination>@(Content -> '$(PackageContentDir)%(RelativePath)%(Filename)%(Extension).pp')</Destination>
             </Content>
             <!-- Include original package source, where we'll append .Source and "(Source)" -->
@@ -99,17 +104,32 @@
 
         <Copy SourceFiles="@(Content)"
               DestinationFiles="@(Content -> '%(Destination)')"
-              Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('%(Content.Filename)', 'AssemblyInfo')) And !$([System.Text.RegularExpressions.Regex]::IsMatch('%(Content.Filename)', 'GlobalSuppressions'))"
               ContinueOnError="false"
               SkipUnchangedFiles="true"
               OverwriteReadOnlyFiles="true" />
 
-        <!-- Make .Resources.Designer aware of the target project assembly name. -->
+        <!-- Make .Resources.Designer aware of the target project assembly name. 
+             Note that for the resource manager we do need to use the PackageId 
+             since it has to match the physical folder under which the .resx 
+             is copied. -->
         <ReplaceContents Condition="'%(Content.Filename)' == 'Resources.Designer'"
                          FileName="%(Content.Destination)"
                          Match='ResourceManager("$(RootNamespace)'
                          Replace='ResourceManager("$AssemblyName$.External.$(PackageId)' />
-
+        <ReplaceContents Condition="'%(Content.Extension)' == '.cs'"
+                         FileName="%(Content.Destination)"
+                         Match="using $(RootNamespace)"
+                         Replace="using $rootnamespace$.$(RootNamespace)" />
+        <!-- Root namespace depends on installing project root namespace, so we replace all namespace declarations -->
+        <ReplaceContents Condition="'%(Content.Extension)' == '.cs'"
+                         FileName="%(Content.Destination)"
+                         Match='namespace $(RootNamespace)'
+                         Replace='namespace $rootnamespace$.$(RootNamespace)' />
+        
+        <ReplaceContents FileName='$(PackageSpec)'
+                         Match='&lt;dependency id="CommonComposition"'
+                         Replace='&lt;dependency id="CommonComposition.Source"' />
+        
         <ItemGroup>
             <_VersionRegexTransform Include="$(PackageSpec)">
                 <Find><![CDATA[<id>(.*?)</id>]]></Find>
