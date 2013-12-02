@@ -145,4 +145,82 @@ if (match.Groups["revision"].Success)
         </Task>
     </UsingTask>
 
+    <UsingTask TaskName="ReadProject" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+        <ParameterGroup>
+            <ProjectFile ParameterType="System.String" Required="true" />
+            <IncludedItemNames ParameterType="System.String" Required="true" />
+            <RootNamespace ParameterType="System.String" Output="true" />
+            <FrameworkName ParameterType="System.String" Output="true" />
+            <Content ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+        </ParameterGroup>
+        <Task>
+            <Reference Include="System.Xml"/>
+            <Reference Include="System.Xml.Linq"/>
+            <Using Namespace="System.IO"/>
+            <Using Namespace="System.Xml"/>
+            <Using Namespace="System.Xml.Linq"/>
+            <Using Namespace="System.Xml.XPath"/>
+            <Code Type="Fragment" Language="cs">
+                <![CDATA[
+            this.Log.LogMessage(MessageImportance.High, "Reading project file {0}", this.ProjectFile);
+            var baseDir = Path.GetDirectoryName(this.ProjectFile);
+            var doc = XDocument.Load(this.ProjectFile);
+            var ns = "{http://schemas.microsoft.com/developer/msbuild/2003}";
+            this.RootNamespace = doc.Root.Elements(ns + "PropertyGroup")
+                .SelectMany(e => e.Elements(ns + "RootNamespace"))
+                .Select(e => e.Value)
+                .First();
+                
+            this.FrameworkName = doc.Root.Elements(ns + "PropertyGroup")
+                .SelectMany(e => e.Elements(ns + "FrameworkName"))
+                .Select(e => e.Value)
+                .First();
+
+            this.Content = doc.Root.Elements(ns + "ItemGroup")
+                .SelectMany(e => e.Elements().Where(x => this.IncludedItemNames.Contains(x.Name.LocalName)))
+                .Select(e => e.Attribute("Include").Value)
+                .Select(x => new TaskItem(Path.Combine(baseDir, x), new Dictionary<string, string>
+                {
+                    { "RelativePath", Path.GetDirectoryName(x).Length == 0 ? "" : Path.GetDirectoryName(x) + Path.DirectorySeparatorChar },
+                }))
+                .ToArray();
+
+            this.Log.LogMessage(MessageImportance.High, "Read {0} items", this.Content.Length);
+]]>
+            </Code>
+        </Task>
+    </UsingTask>
+
+    <UsingTask TaskName="DownloadNuGet" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+        <ParameterGroup>
+            <OutputFilename ParameterType="System.String" Required="true" />
+        </ParameterGroup>
+        <Task>
+            <Reference Include="System.Core" />
+            <Using Namespace="System" />
+            <Using Namespace="System.IO" />
+            <Using Namespace="System.Net" />
+            <Using Namespace="Microsoft.Build.Framework" />
+            <Using Namespace="Microsoft.Build.Utilities" />
+            <Code Type="Fragment" Language="cs">
+                <![CDATA[
+                try
+                {
+                    OutputFilename = Path.GetFullPath(OutputFilename);
+
+                    Log.LogMessage("Downloading latest version of NuGet.exe to " + OutputFilename);
+                    WebClient webClient = new WebClient();
+                    webClient.DownloadFile("https://www.nuget.org/nuget.exe", OutputFilename);
+
+                    return true;
+                }
+                catch (Exception ex) {
+                    Log.LogErrorFromException(ex);
+                    return false;
+                }
+            ]]>
+            </Code>
+        </Task>
+    </UsingTask>
+
 </Project>
