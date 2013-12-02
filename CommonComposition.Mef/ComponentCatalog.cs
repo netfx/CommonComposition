@@ -8,18 +8,47 @@
     using System.Linq;
     using System.Reflection;
 
+    /// <summary>
+    /// A custom MEF catalog that provides the behavior of automatically exposing 
+    /// the annotated components from the assemblies or types received 
+    /// in the constructor.
+    /// </summary>
+    /// <remarks>
+    /// <example>
+    /// The following example registers all annotated components from the given 
+    /// given assembly with the container configuration:
+    ///     <code>
+    ///     var configuration = new ContainerConfiguration();
+    ///     configuration.RegisterComponents(typeof(IFoo).Assembly);
+    ///
+    ///     var container = configuration.CreateContainer();
+    ///     </code>
+    /// </example>
+    /// </remarks>
     public class ComponentCatalog : TypeCatalog
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComponentCatalog"/> class.
+        /// </summary>
+        /// <param name="assemblies">The assemblies to scan for components.</param>
         public ComponentCatalog(params Assembly[] assemblies)
             : this(assemblies.SelectMany(a => a.GetTypes()))
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComponentCatalog"/> class.
+        /// </summary>
+        /// <param name="types">The types to scan for <see cref="ComponentAttribute"/>-annotated ones.</param>
         public ComponentCatalog(params Type[] types)
             : this((IEnumerable<Type>)types)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComponentCatalog"/> class.
+        /// </summary>
+        /// <param name="types">The types to scan for <see cref="ComponentAttribute"/>-annotated ones.</param>
         public ComponentCatalog(IEnumerable<Type> types)
             : base(types.Where(t => t.IsDefined(typeof(ComponentAttribute), true) && !t.IsAbstract).Select(t => new ComponentType(t)))
         {

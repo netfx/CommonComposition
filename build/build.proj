@@ -17,23 +17,112 @@
         <DropsDir>..\drops\</DropsDir>
         <SourcesDir>$(MSBuildThisFileDirectory)</SourcesDir>
         <PackagesDir>$(SourcesDir)packages\</PackagesDir>
-        <ContentDir>content\External\</ContentDir>
     </PropertyGroup>
 
-    <Target Name="Build" DependsOnTargets="Clean">
-        <Message Importance="high" Text="Building package version '$(PackageVersion)'" />
-        
+    <PropertyGroup>
+        <IncludedItemNames>Compile;Content;EmbeddedResource</IncludedItemNames>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageSource Include="$(SolutionDir)CommonComposition\CommonComposition.nuspec">
+            <Id>CommonComposition</Id>
+            <Project>$(SolutionDir)CommonComposition\CommonComposition.csproj</Project>
+        </PackageSource>
+        <PackageSource Include="$(SolutionDir)CommonComposition.Autofac\CommonComposition.Autofac.nuspec">
+            <Id>CommonComposition.Autofac</Id>
+            <Project>$(SolutionDir)CommonComposition.Autofac\CommonComposition.Autofac.csproj</Project>
+        </PackageSource>
+        <PackageSource Include="$(SolutionDir)CommonComposition.Mef\CommonComposition.Mef.nuspec">
+            <Id>CommonComposition.Mef</Id>
+            <Project>$(SolutionDir)CommonComposition.Mef\CommonComposition.Mef.csproj</Project>
+        </PackageSource>
+        <PackageSource Include="$(SolutionDir)CommonComposition.Microsoft\CommonComposition.Mef.nuspec">
+            <Id>CommonComposition.Mef</Id>
+            <Project>$(SolutionDir)CommonComposition.Microsoft\CommonComposition.Microsoft.csproj</Project>
+        </PackageSource>
+        <PackageSource Include="$(SolutionDir)CommonComposition.Ninject\CommonComposition.Ninject.nuspec">
+            <Id>CommonComposition.Ninject</Id>
+            <Project>$(SolutionDir)CommonComposition.Ninject\CommonComposition.Ninject.csproj</Project>
+        </PackageSource>
+        <PackageSource Include="$(SolutionDir)CommonComposition.Unity\CommonComposition.Unity.nuspec">
+            <Id>CommonComposition.Unity</Id>
+            <Project>$(SolutionDir)CommonComposition.Unity\CommonComposition.Unity.csproj</Project>
+        </PackageSource>
+        <PackageSource Include="$(SolutionDir)CommonComposition.Windsor\CommonComposition.Windsor.nuspec">
+            <Id>CommonComposition.Windsor</Id>
+            <Project>$(SolutionDir)CommonComposition.Windsor\CommonComposition.Windsor.csproj</Project>
+        </PackageSource>
+    </ItemGroup>
+
+    <Target Name="Build" DependsOnTargets="Clean;BuildBinary;BuildSource;Drop" />
+
+    <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+
+    <Target Name="BuildBinary">
         <MSBuild Projects="..\CommonComposition.sln"
                  Properties="Configuration=$(Configuration);PackageVersion=$(PackageVersion)"
                  Targets="Rebuild"
                  />
+    </Target>
+
+    <Target Name="BuildSource" Inputs="@(PackageSource)" Outputs="%(Identity)-runalways" >
+        <ReadProject ProjectFile="%(PackageSource.Project)" IncludedItemNames="$(IncludedItemNames)">
+            <Output TaskParameter="RootNamespace" PropertyName="RootNamespace" />
+            <Output TaskParameter="FrameworkName" PropertyName="FrameworkName" />
+            <Output TaskParameter="Content" ItemName="Content" />
+        </ReadProject>
+        <PropertyGroup>
+            <PackageId>%(PackageSource.Id)</PackageId>
+            <PackageDir>$(PackagesDir)$(PackageId)\</PackageDir>
+            <PackageContentDir>$(PackageDir)content\$(FrameworkName)\External\$(PackageId)\</PackageContentDir>
+            <PackageSpec>$(PackageDir)%(PackageSource.Filename)%(PackageSource.Extension)</PackageSpec>
+        </PropertyGroup>
 
         <ItemGroup>
-            <Package Include="..\**\*.nupkg" Exclude="..\packages\**\*.nupkg" />
+            <!-- Append destination location metadata to all content -->
+            <Content Condition="'%(Content.Identity)' != ''">
+                <Destination>@(Content -> '$(PackageContentDir)%(RelativePath)%(Filename)%(Extension)')</Destination>
+            </Content>
+            <!-- Make .Resources.Designer aware of the target project assembly name. -->
+            <Content Condition="'%(Content.Filename)' == 'Resources.Designer'">
+                <Destination>@(Content -> '$(PackageContentDir)%(RelativePath)%(Filename)%(Extension).pp')</Destination>
+            </Content>
+            <!-- Include original package source, where we'll append .Source and "(Source)" -->
+            <Content Include="@(PackageSource)">
+                <Destination>$(PackageSpec)</Destination>
+            </Content>
         </ItemGroup>
 
-        <Move SourceFiles="@(Package)" 
-              DestinationFiles="@(Package -> '$(DropsDir)%(Filename)%(Extension)')" />
+        <Copy SourceFiles="@(Content)"
+              DestinationFiles="@(Content -> '%(Destination)')"
+              Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('%(Content.Filename)', 'AssemblyInfo')) And !$([System.Text.RegularExpressions.Regex]::IsMatch('%(Content.Filename)', 'GlobalSuppressions'))"
+              ContinueOnError="false"
+              SkipUnchangedFiles="true"
+              OverwriteReadOnlyFiles="true" />
+
+        <!-- Make .Resources.Designer aware of the target project assembly name. -->
+        <ReplaceContents Condition="'%(Content.Filename)' == 'Resources.Designer'"
+                         FileName="%(Content.Destination)"
+                         Match='ResourceManager("$(RootNamespace)'
+                         Replace='ResourceManager("$AssemblyName$.External.$(PackageId)' />
+
+        <ItemGroup>
+            <_VersionRegexTransform Include="$(PackageSpec)">
+                <Find><![CDATA[<id>(.*?)</id>]]></Find>
+                <ReplaceWith><![CDATA[<id>$1.Source</id>]]></ReplaceWith>
+                <Options>Singleline</Options>
+            </_VersionRegexTransform>
+            <_VersionRegexTransform Include="$(PackageSpec)">
+                <Find><![CDATA[<title>(.*?)</title>]]></Find>
+                <ReplaceWith><![CDATA[<title>$1 (Source)</title>]]></ReplaceWith>
+                <Options>Singleline</Options>
+            </_VersionRegexTransform>
+        </ItemGroup>
+
+        <RegexTransform Items="@(_VersionRegexTransform)" />
+
+        <Exec Command="&quot;$(NuGetExe)&quot; pack -NoPackageAnalysis &quot;$(PackageSpec)&quot; -OutputDirectory &quot;$(PackagesDir.TrimEnd('\'))&quot; -Version &quot;$(PackageVersion)&quot;" />
+
     </Target>
 
     <Target Name="Clean">
@@ -41,7 +130,7 @@
             <AllFiles Include="..\**\bin\*.nupkg" />
             <AllDirs Include="@(AllFiles -> '%(RootDir)%(Directory)')" />
             <AllBin Include="@(AllDirs -> Distinct())" />
-            <Bin Include="@(AllBin -> TrimEnd('\'))" />        
+            <Bin Include="@(AllBin -> TrimEnd('\'))" />
         </ItemGroup>
 
         <Exec Command="rmdir &quot;$(DropsDir.TrimEnd('\'))&quot; /S /Q" Condition="Exists('$(DropsDir)')" />
@@ -49,5 +138,59 @@
         <Exec Command="rmdir &quot;@(Bin)&quot; /S /Q" Condition="'%(Bin.Directory)' != ''"/>
     </Target>
 
-    <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+    <Target Name="Drop">
+        <ItemGroup>
+            <Package Include="..\**\*.nupkg" Exclude="..\packages\**\*.nupkg" />
+        </ItemGroup>
+
+        <Move SourceFiles="@(Package)"
+              DestinationFiles="@(Package -> '$(DropsDir)%(Filename)%(Extension)')" />
+    </Target>
+
+    <UsingTask TaskName="ReadProject" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+        <ParameterGroup>
+            <ProjectFile ParameterType="System.String" Required="true" />
+            <IncludedItemNames ParameterType="System.String" Required="true" />
+            <RootNamespace ParameterType="System.String" Output="true" />
+            <FrameworkName ParameterType="System.String" Output="true" />
+            <Content ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+        </ParameterGroup>
+        <Task>
+            <Reference Include="System.Xml"/>
+            <Reference Include="System.Xml.Linq"/>
+            <Using Namespace="System.IO"/>
+            <Using Namespace="System.Xml"/>
+            <Using Namespace="System.Xml.Linq"/>
+            <Using Namespace="System.Xml.XPath"/>
+            <Code Type="Fragment" Language="cs">
+                <![CDATA[
+            this.Log.LogMessage(MessageImportance.High, "Reading project file {0}", this.ProjectFile);
+            var baseDir = Path.GetDirectoryName(this.ProjectFile);
+            var doc = XDocument.Load(this.ProjectFile);
+            var ns = "{http://schemas.microsoft.com/developer/msbuild/2003}";
+            this.RootNamespace = doc.Root.Elements(ns + "PropertyGroup")
+                .SelectMany(e => e.Elements(ns + "RootNamespace"))
+                .Select(e => e.Value)
+                .First();
+                
+            this.FrameworkName = doc.Root.Elements(ns + "PropertyGroup")
+                .SelectMany(e => e.Elements(ns + "FrameworkName"))
+                .Select(e => e.Value)
+                .First();
+
+            this.Content = doc.Root.Elements(ns + "ItemGroup")
+                .SelectMany(e => e.Elements().Where(x => this.IncludedItemNames.Contains(x.Name.LocalName)))
+                .Select(e => e.Attribute("Include").Value)
+                .Select(x => new TaskItem(Path.Combine(baseDir, x), new Dictionary<string, string>
+                {
+                    { "RelativePath", Path.GetDirectoryName(x).Length == 0 ? "" : Path.GetDirectoryName(x) + Path.DirectorySeparatorChar },
+                }))
+                .ToArray();
+
+            this.Log.LogMessage(MessageImportance.High, "Read {0} items", this.Content.Length);
+]]>
+            </Code>
+        </Task>
+    </UsingTask>
+
 </Project>

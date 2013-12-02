@@ -4,7 +4,7 @@
     
     <Target Name="AfterBuild" Condition="$(NuGet) == 'true'" DependsOnTargets="CopySymbolSources;InjectReleaseNotes;BuildPackage">
     </Target>
-
+    
     <Target Name="CopySymbolSources">
         <ItemGroup>
             <SymbolSource Include="**\*.cs" Exclude="bin\**\*.cs">

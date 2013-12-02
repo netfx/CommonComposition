@@ -11,6 +11,16 @@
     /// Provides automatic component registration by scanning assemblies and types for 
     /// those that have the <see cref="ComponentAttribute"/> annotation.
     /// </summary>
+    /// <remarks>
+    /// <example>
+    /// The following example shows how the catalog can be used when constructing 
+    /// a composition container with common composition behavior:
+    ///     <code>
+    ///     var catalog = new ComponentCatalog(typeof(IFoo).Assembly);
+    ///     var container = new CompositionContainer(catalog);
+    ///     </code>
+    /// </example>
+    /// </remarks>
     public static class CompositionExtensions
     {
         /// <summary>

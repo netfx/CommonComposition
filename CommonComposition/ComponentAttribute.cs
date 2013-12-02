@@ -19,10 +19,6 @@
         /// </summary>
         public ComponentAttribute()
         {
-            // Neither of these are needed, but this makes it explicit what 
-            // the default values are for anyone looking at the source code 
-            // of reflectoring.
-            //SingletonScope = SingletonScope.Hierarchy;
             IsSingleton = false;
         }
 
@@ -37,12 +33,5 @@
         /// </remarks>
         [DefaultValue(false)]
         public bool IsSingleton { get; set; }
-
-        ///// <summary>
-        ///// If <see cref="IsSingleton"/> is <see langword="true"/>, this value determines how the 
-        ///// singleton is shared across child container/scope hierarchies.
-        ///// </summary>
-        //[DefaultValue(SingletonScope.Hierarchy)]
-        //public SingletonScope SingletonScope { get; set; }
     }
 }

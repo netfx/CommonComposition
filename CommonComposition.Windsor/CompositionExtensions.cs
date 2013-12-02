@@ -8,33 +8,67 @@
     using System.Linq;
     using System.Reflection;
 
+    /// <summary>
+    /// Provides automatic component registration by scanning assemblies and types for 
+    /// those that have the <see cref="ComponentAttribute"/> annotation.
+    /// </summary>
+    /// <remarks>
+    /// Several overloads provide seamless Windsor registration custommization.
+    /// <example>
+    /// The following example registers all annotated components from the given 
+    /// given assembly on the given Windsor container:
+    ///     <code>
+    ///     var container = new WindsorContainer();
+    ///     
+    ///     container.RegisterComponents(typeof(IFoo).Assembly);
+    ///     </code>
+    /// </example>
+    /// </remarks>
     public static class CompositionExtensions
     {
+        /// <summary>
+        /// Registers the components found in the given assemblies.
+        /// </summary>
         public static void RegisterComponents(this IWindsorContainer container, params Assembly[] assemblies)
         {
             RegisterComponents(container, null, assemblies.SelectMany(asm => asm.GetTypes()));
         }
 
+        /// <summary>
+        /// Registers the components found in the given assemblies.
+        /// </summary>
         public static void RegisterComponents(this IWindsorContainer container, Action<BasedOnDescriptor> customize, params Assembly[] assemblies)
         {
             RegisterComponents(container, customize, assemblies.SelectMany(asm => asm.GetTypes()));
         }
 
+        /// <summary>
+        /// Registers the components found in the given types.
+        /// </summary>
         public static void RegisterComponents(this IWindsorContainer container, params Type[] types)
         {
             RegisterComponents(container, null, (IEnumerable<Type>)types);
         }
 
+        /// <summary>
+        /// Registers the components found in the given types.
+        /// </summary>
         public static void RegisterComponents(this IWindsorContainer container, Action<BasedOnDescriptor> customize, params Type[] types)
         {
             RegisterComponents(container, customize, (IEnumerable<Type>)types);
         }
 
+        /// <summary>
+        /// Registers the components found in the given types.
+        /// </summary>
         public static void RegisterComponents(this IWindsorContainer container, IEnumerable<Type> types)
         {
             RegisterComponents(container, null, types);
         }
 
+        /// <summary>
+        /// Registers the components found in the given types.
+        /// </summary>
         public static void RegisterComponents(this IWindsorContainer container, Action<BasedOnDescriptor> customize, IEnumerable<Type> types)
         {
             var descriptor = Classes.From(types)

@@ -3,6 +3,36 @@
 
     <!--
     ============================================================
+				ReplaceContents
+
+    Performs simple string replacement in a file contents.
+    
+    Example:
+
+        <ReplaceContents FileName="$(PackageSpec)"
+                         Match='$PackageVersion$'
+                         Replace='$(PackageVersion)' />
+    
+    ============================================================
+    -->
+    <UsingTask TaskName="ReplaceContents" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+        <ParameterGroup>
+            <FileName ParameterType="System.String" Required="true" />
+            <Match ParameterType="System.String" Required="true" />
+            <Replace ParameterType="System.String" Required="true" />
+        </ParameterGroup>
+        <Task>
+            <Using Namespace="System.IO"/>
+            <Code Type="Fragment" Language="cs">
+                <![CDATA[
+File.WriteAllText(this.FileName, File.ReadAllText(this.FileName).Replace(this.Match, this.Replace));                
+]]>
+            </Code>
+        </Task>
+    </UsingTask>
+
+    <!--
+    ============================================================
 				RegexTransform
 
     Transforms the input Items parameter by evaluating the 

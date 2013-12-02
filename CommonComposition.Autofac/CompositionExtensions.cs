@@ -14,6 +14,20 @@
     /// Provides automatic component registration by scanning assemblies and types for 
     /// those that have the <see cref="ComponentAttribute"/> annotation.
     /// </summary>
+    /// <remarks>
+    /// Several overloads provide seamless chaining with other Autofac registration 
+    /// extensions.
+    /// <example>
+    /// The following example registers all annotated components from the given 
+    /// given assembly on the given container builder:
+    ///     <code>
+    ///     var builder = new ContainerBuilder();
+    ///     builder.RegisterComponents(typeof(IFoo).Assembly);
+    ///     
+    ///     var container = builder.Build();
+    ///     </code>
+    /// </example>
+    /// </remarks>
     public static class CompositionExtensions
     {
         /// <summary>

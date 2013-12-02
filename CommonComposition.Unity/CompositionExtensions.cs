@@ -12,6 +12,17 @@
     /// Provides automatic component registration by scanning assemblies and types for 
     /// those that have the <see cref="ComponentAttribute"/> annotation.
     /// </summary>
+    /// <remarks>
+    /// <example>
+    /// The following example registers all annotated components from the given 
+    /// given assembly with the container configuration:
+    ///     <code>
+    ///     var container = new UnityContainer();
+    ///
+    ///     container.RegisterComponents(typeof(IFoo).Assembly);
+    ///     </code>
+    /// </example>
+    /// </remarks>
     public static class CompositionExtensions
     {
         /// <summary>

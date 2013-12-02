@@ -1,13 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CommonComposition
+﻿namespace CommonComposition
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
+    using System.Reflection;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// Provides a base <see cref="ConstructorInfo"/> that can be 
+    /// customized to expose tailored metadata for a constructor 
+    /// to APIs that use reflection.
+    /// </summary>
     internal class DelegatingConstructorInfo : ConstructorInfo
     {
         private ConstructorInfo constructor;
@@ -78,6 +83,11 @@ namespace CommonComposition
         }
     }
 
+    /// <summary>
+    /// Provides a base <see cref="ParameterInfo"/> that can be 
+    /// customized to expose tailored metadata for a parameter 
+    /// to APIs that use reflection.
+    /// </summary>
     internal class DelegatingParameterInfo : ParameterInfo
     {
         private readonly ParameterInfo parameter;
