@@ -15,6 +15,7 @@
     <FrameworkName>portable-net45+win8</FrameworkName>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <FodyPath>..\packages\Fody.1.18.0.0</FodyPath>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\CommonComposition.props" />
   <PropertyGroup>
@@ -62,8 +63,13 @@
   </ItemGroup>
   <ItemGroup>
     <NuSpec Include="CommonComposition.Mef.nuspec" />
+    <None Include="Fody.targets" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="$(MSBuildThisFileDirectory)..\CommonComposition.targets" />
+  <Import Project="Fody.targets" />
 </Project>

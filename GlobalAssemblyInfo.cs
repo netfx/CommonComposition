@@ -9,9 +9,7 @@ using System.Resources;
 
 [assembly: AssemblyVersion("0.2.1311.2722")]
 [assembly: AssemblyFileVersion("0.2.1311.2722")]
-
-// This attribute should be the SemanticVersion one.
-[assembly: AssemblyInformationalVersion("0.2.1311.2722")]
+[assembly: AssemblyInformationalVersion("%version%, Branch=%branch%, Sha=%githash%")]
 
 [assembly: NeutralResourcesLanguage("en")]
 

@@ -1,51 +1,57 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-    <PropertyGroup>
-        <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{0215E667-DAD8-4A7E-AEFD-43919006D960}</ProjectGuid>
-        <OutputType>Library</OutputType>
-        <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>CommonComposition</RootNamespace>
-        <AssemblyName>CommonComposition.Ninject</AssemblyName>
-        <FrameworkName>net40</FrameworkName>
-    </PropertyGroup>
-    <Import Project="$(MSBuildThisFileDirectory)..\CommonComposition.props" />
-    <ItemGroup>
-        <Reference Include="Castle.Core">
-            <HintPath>..\packages\Castle.Core.3.2.1\lib\net40-client\Castle.Core.dll</HintPath>
-        </Reference>
-        <Reference Include="Ninject">
-            <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="System" />
-        <Reference Include="Microsoft.CSharp" />
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Include="..\CommonComposition.Mef\DelegatingReflection.cs">
-            <Link>DelegatingReflection.cs</Link>
-        </Compile>
-        <Compile Include="..\GlobalAssemblyInfo.cs">
-            <Link>Properties\GlobalAssemblyInfo.cs</Link>
-        </Compile>
-        <Compile Include="CompositionExtensions.cs" />
-        <Compile Include="Properties\AssemblyInfo.cs" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="ReleaseNotes.md" />
-        <NuSpec Include="CommonComposition.Ninject.nuspec" />
-        <None Include="packages.config" />
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\CommonComposition\CommonComposition.csproj">
-            <Project>{5edc8001-5b18-40c8-a0ba-e749c546b684}</Project>
-            <Name>CommonComposition</Name>
-            <Private>False</Private>
-        </ProjectReference>
-    </ItemGroup>
-    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-    <Import Project="$(MSBuildThisFileDirectory)..\CommonComposition.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0215E667-DAD8-4A7E-AEFD-43919006D960}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CommonComposition</RootNamespace>
+    <AssemblyName>CommonComposition.Ninject</AssemblyName>
+    <FrameworkName>net40</FrameworkName>
+    <FodyPath>..\packages\Fody.1.18.0.0</FodyPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildThisFileDirectory)..\CommonComposition.props" />
+  <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.2.1\lib\net40-client\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonComposition.Mef\DelegatingReflection.cs">
+      <Link>DelegatingReflection.cs</Link>
+    </Compile>
+    <Compile Include="..\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="CompositionExtensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Fody.targets" />
+    <None Include="ReleaseNotes.md" />
+    <NuSpec Include="CommonComposition.Ninject.nuspec" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CommonComposition\CommonComposition.csproj">
+      <Project>{5edc8001-5b18-40c8-a0ba-e749c546b684}</Project>
+      <Name>CommonComposition</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FodyWeavers.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\CommonComposition.targets" />
+  <Import Project="Fody.targets" />
 </Project>

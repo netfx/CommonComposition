@@ -11,6 +11,7 @@
     <RootNamespace>CommonComposition</RootNamespace>
     <AssemblyName>CommonComposition.Autofac</AssemblyName>
     <FrameworkName>net40</FrameworkName>
+    <FodyPath>..\packages\Fody.1.18.0.0</FodyPath>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\CommonComposition.props" />
   <ItemGroup>
@@ -37,9 +38,14 @@
     <NuSpec Include="CommonComposition.Autofac.nuspec" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Fody.targets" />
     <None Include="packages.config" />
     <None Include="ReleaseNotes.md" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="FodyWeavers.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildThisFileDirectory)..\CommonComposition.targets" />
+  <Import Project="Fody.targets" />
 </Project>
