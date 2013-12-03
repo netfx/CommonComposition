@@ -26,13 +26,11 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CommonComposition.Mef\DelegatingReflection.cs">
-      <Link>DelegatingReflection.cs</Link>
-    </Compile>
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CompositionExtensions.cs" />
+    <Compile Include="DelegatingReflection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

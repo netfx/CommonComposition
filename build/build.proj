@@ -14,9 +14,9 @@
         <NuGetDir>$(SolutionDir).nuget\</NuGetDir>
         <NuGetExe>$(NuGetDir)NuGet.exe</NuGetExe>
 
-        <DropsDir>..\drops\</DropsDir>
         <SourcesDir>$(MSBuildThisFileDirectory)</SourcesDir>
         <PackagesDir>$(SourcesDir)packages\</PackagesDir>
+        <DropsDir>$(SolutionDir)drops\</DropsDir>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -58,15 +58,23 @@
         <Solutions Include="..\CommonComposition.sln"/>
     </ItemGroup>
 
-    <Target Name="Build" DependsOnTargets="RestorePackages;Clean;BuildBinary;BuildSource;Drop" />
+    <Target Name="Push" DependsOnTargets="Build">
+        <ItemGroup>
+            <PackageToPush Include="$(DropsDir)*.nupkg"
+                           Exclude="$(DropsDir)*.symbols.nupkg"/>
+        </ItemGroup>
+
+        <Exec Command="&quot;$(NuGetExe)&quot; push &quot;%(PackageToPush.Identity)&quot;" ContinueOnError="true" />
+    </Target>
+
+    <Target Name="Build" DependsOnTargets="RestorePackages;Clean;PatchAssemblyInfo;BuildBinary;BuildSource;Drop" />
 
     <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
 
     <Target Name="BuildBinary">
         <MSBuild Projects="@(Solutions)"
                  Properties="Configuration=$(Configuration);PackageVersion=$(PackageVersion)"
-                 Targets="Rebuild"
-                 />
+                 Targets="Rebuild" />
     </Target>
 
     <Target Name="BuildSource" Inputs="@(PackageSource)" Outputs="%(Identity)-runalways" >
@@ -84,13 +92,13 @@
             We use the same target namespace for all packages
             <ContentNamespace>$(PackageId)</ContentNamespace>
             -->
-            
+
         </PropertyGroup>
 
         <ItemGroup>
             <Content Include="@(_Content)"
                      Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('%(_Content.Filename)', 'AssemblyInfo')) And !$([System.Text.RegularExpressions.Regex]::IsMatch('%(_Content.Filename)', 'GlobalSuppressions'))" />
-            
+
             <!-- Append destination location metadata to all content -->
             <!-- Make all content files transformable -->
             <Content Condition="'%(Content.Identity)' != ''">
@@ -125,28 +133,47 @@
                          FileName="%(Content.Destination)"
                          Match='namespace $(RootNamespace)'
                          Replace='namespace $rootnamespace$.$(RootNamespace)' />
-        
+
         <ReplaceContents FileName='$(PackageSpec)'
-                         Match='&lt;dependency id="CommonComposition"'
-                         Replace='&lt;dependency id="CommonComposition.Source"' />
-        
+                         Match='dependency id="CommonComposition"'
+                         Replace='dependency id="CommonComposition.Source"' />
+
         <ItemGroup>
-            <_VersionRegexTransform Include="$(PackageSpec)">
+            <_PackageTransform Include="$(PackageSpec)">
                 <Find><![CDATA[<id>(.*?)</id>]]></Find>
                 <ReplaceWith><![CDATA[<id>$1.Source</id>]]></ReplaceWith>
                 <Options>Singleline</Options>
-            </_VersionRegexTransform>
-            <_VersionRegexTransform Include="$(PackageSpec)">
+            </_PackageTransform>
+            <_PackageTransform Include="$(PackageSpec)">
                 <Find><![CDATA[<title>(.*?)</title>]]></Find>
                 <ReplaceWith><![CDATA[<title>$1 (Source)</title>]]></ReplaceWith>
                 <Options>Singleline</Options>
-            </_VersionRegexTransform>
+            </_PackageTransform>
+            <_PackageTransform Include="$(PackageSpec)">
+                <Find><![CDATA[<dependency id="Composition"]]></Find>
+                <ReplaceWith><![CDATA[<dependency id="Composition.Source"]]></ReplaceWith>
+                <Options>Singleline</Options>
+            </_PackageTransform>
         </ItemGroup>
 
-        <RegexTransform Items="@(_VersionRegexTransform)" />
+        <RegexTransform Items="@(_PackageTransform)" />
 
         <Exec Command="&quot;$(NuGetExe)&quot; pack -NoPackageAnalysis &quot;$(PackageSpec)&quot; -OutputDirectory &quot;$(PackagesDir.TrimEnd('\'))&quot; -Version &quot;$(PackageVersion)&quot;" />
+    </Target>
 
+    <Target Name="PatchAssemblyInfo">
+        <ItemGroup>
+            <_AssemblyInfoTransform Include="$(SolutionDir)GlobalAssemblyInfo.cs">
+                <Find>AssemblyFileVersion\(".*?"\)</Find>
+                <ReplaceWith>AssemblyFileVersion("$(PackageVersion)")</ReplaceWith>
+            </_AssemblyInfoTransform>
+            <_AssemblyInfoTransform Include="$(SolutionDir)GlobalAssemblyInfo.cs">
+                <Find>AssemblyVersion\(".*?"\)</Find>
+                <ReplaceWith>AssemblyVersion("$(PackageVersion)")</ReplaceWith>
+            </_AssemblyInfoTransform>
+        </ItemGroup>
+        
+        <RegexTransform Items="@(_AssemblyInfoTransform)" />
     </Target>
 
     <Target Name="Clean">

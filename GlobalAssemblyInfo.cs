@@ -7,8 +7,8 @@ using System.Resources;
 [assembly: AssemblyTrademark("CommonComposition")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.2.1311.2722")]
-[assembly: AssemblyFileVersion("0.2.1311.2722")]
+[assembly: AssemblyVersion("0.2.3")]
+[assembly: AssemblyFileVersion("0.2.3")]
 [assembly: AssemblyInformationalVersion("%version%, Branch=%branch%, Sha=%githash%")]
 
 [assembly: NeutralResourcesLanguage("en")]

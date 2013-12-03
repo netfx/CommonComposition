@@ -20,13 +20,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Windsor",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComposition.Ninject", "CommonComposition.Ninject\CommonComposition.Ninject.csproj", "{0215E667-DAD8-4A7E-AEFD-43919006D960}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{0FB7B7BF-C49E-40BE-9CEB-B40D31485D5B}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\packages.config = .nuget\packages.config
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DF7B6823-9E8D-428B-8615-B5B6510E39BA}"
 	ProjectSection(SolutionItems) = preProject
 		build\build.proj = build\build.proj
