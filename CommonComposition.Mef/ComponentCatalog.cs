@@ -120,6 +120,11 @@
 
             public override ConstructorInfo[] GetConstructors(BindingFlags bindingAttr)
             {
+                // Do not expose non-public constructors for composition, since 
+                // this is the behavior of all other frameworks (including Microsoft.Composition!)
+                if (bindingAttr.HasFlag(BindingFlags.NonPublic))
+                    bindingAttr &= ~BindingFlags.NonPublic;
+
                 var ctor = base.GetConstructors(bindingAttr).OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
                 if (ctor != null)
                     return new ConstructorInfo[] { new ImportingConstructorInfo(ctor) };
@@ -168,7 +173,12 @@
 
             private class ImportedParameterInfo : DelegatingParameterInfo
             {
-                private ImportAttribute import;
+                // Both import attributes implement IAttributeImport, an internal interface 
+                // which is used when querying for the import or import many attributes. 
+                // We don't want to hardcode that here, so we retrieve the interface type 
+                // via reflection.
+                private Type attributedImportInterface = typeof(ImportAttribute).GetInterfaces().First(i => i.Namespace.StartsWith("System.ComponentModel.Composition"));
+                private Attribute import;
 
                 public ImportedParameterInfo(ParameterInfo parameter)
                     : base(parameter)
@@ -178,23 +188,36 @@
                         .Select(x => x.Name)
                         .FirstOrDefault();
 
-                    this.import = new ImportAttribute(name);
+                    if (parameter.ParameterType.IsGenericType &&
+                        parameter.ParameterType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                        this.import = new ImportManyAttribute(name);
+                    else
+                        this.import = new ImportAttribute(name);
                 }
 
                 public override bool IsDefined(Type attributeType, bool inherit)
                 {
+                    if (attributeType == attributedImportInterface)
+                        return true;
+
+                    if (attributeType == typeof(ImportManyAttribute))
+                        return import is ImportManyAttribute;
+                    else if (attributeType == typeof(ImportAttribute))
+                        return import is ImportAttribute;
+
                     return base.IsDefined(attributeType, inherit);
                 }
 
                 public override object[] GetCustomAttributes(Type attributeType, bool inherit)
                 {
-                    var attrs = base.GetCustomAttributes(attributeType, inherit);
-                    var result = (object[])Array.CreateInstance(attributeType, attrs.Length + 1);
-                    attrs.CopyTo(result, 0);
-                    result[result.Length - 1] = import;
-                    attrs = result;
+                    if (attributeType == attributedImportInterface)
+                    {
+                        var attrs = (object[])Array.CreateInstance(attributedImportInterface, 1);
+                        attrs[0] = import;
+                        return attrs;
+                    }
 
-                    return result;
+                    return base.GetCustomAttributes(attributeType, inherit);
                 }
             }
         }
