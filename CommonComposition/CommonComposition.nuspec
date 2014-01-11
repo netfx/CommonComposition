@@ -8,7 +8,7 @@
         <owners>clariuslabs, danielkzu</owners>
         <licenseUrl>https://raw.github.com/clariuslabs/CommonComposition/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/clariuslabs/CommonComposition</projectUrl>
-        <iconUrl>http://clarius.io/commoncomposition</iconUrl>
+        <iconUrl>https://raw.github.com/clariuslabs/CommonComposition/master/icon/48.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Portable component composition annotations, dependency injection framework agnostic.
         

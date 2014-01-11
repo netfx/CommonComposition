@@ -8,7 +8,7 @@
         <owners>clariuslabs, danielkzu</owners>
         <licenseUrl>https://raw.github.com/clariuslabs/CommonComposition/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/clariuslabs/CommonComposition</projectUrl>
-        <iconUrl>http://clarius.io/commoncomposition</iconUrl>
+        <iconUrl>https://raw.github.com/clariuslabs/CommonComposition/master/icon/48.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Provides the Common Composition bindings for Ninject.</description>
         <copyright>Copyright 2013, ClariusLabs under Apache 2.0 license</copyright>
