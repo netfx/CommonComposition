@@ -14,7 +14,6 @@
         <copyright>Copyright 2013, ClariusLabs under Apache 2.0 license</copyright>
         <tags>dependency injection di extensibility composition clariuslabs</tags>
         <dependencies>
-            <dependency id="CommonComposition" version="0.1"/>
             <dependency id="Ninject" version="3.0" />
         </dependencies>
     </metadata>

@@ -17,11 +17,7 @@
             <frameworkAssembly assemblyName="System.ComponentModel.Composition" targetFramework="net40" />
         </frameworkAssemblies>
         <dependencies>
-            <group targetFramework="net40">
-                <dependency id="CommonComposition" version="0.1"/>
-            </group>
             <group targetFramework="portable-net45+win8">
-                <dependency id="CommonComposition" version="0.1"/>
                 <dependency id="Microsoft.Composition" version="1.0" />
             </group>
         </dependencies>
