@@ -15,7 +15,7 @@ The Common Composition provides basic annotation attributes you need to specify 
 In addition, Common Composition will provide a set of default configurations for various containers so that the behave consistently with regards to some common relationship types, such as dependencies on Func<T> factories, IEnumerable<T>, etc.
 
 ### What about Common Service Locator?
-The [Common Service Locator](http://commonservicelocator.codeplex.com/) project also provides an abstraction over IoC containers, but it's intended consumers are other frameworks, not application code. So much that a Service Locator is considered by most to be an [anti-pattern](https://www.google.com.ar/search?q=service+locator+anti+pattern). 
+The [Common Service Locator](http://commonservicelocator.codeplex.com/) project also provides an abstraction over IoC containers, but its intended consumers are other frameworks, not application code. So much that a Service Locator is considered by most to be an [anti-pattern](https://www.google.com.ar/search?q=service+locator+anti+pattern). 
 
 Your application code should clearly NOT depend on that abstraction.
 
